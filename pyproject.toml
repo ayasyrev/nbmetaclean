@@ -1,0 +1,9 @@
+[tool.coverage.paths]
+source = ["src", "*/site-packages"]
+
+[tool.coverage.run]
+branch = true
+source = ["nbmetaclean"]
+
+[tool.coverage.report]
+show_missing = true
