@@ -1,5 +1,6 @@
 from pathlib import Path
 from nbconvert.exporters.exporter import ResourcesDict
+from pytest import CaptureFixture
 
 from nbmetaclean.clean import clean_nb, clean_nb_file
 from nbmetaclean.core import read_nb, write_nb
@@ -43,7 +44,7 @@ def test_clean_nb():
     assert resources == empty_resources
 
 
-def test_clean_nb_file(tmp_path: Path):
+def test_clean_nb_file(tmp_path: Path, capsys: CaptureFixture[str]):
     """test clean nb file"""
     path = Path("tests/test_nbs")
     nb_name = "test_nb_2.ipynb"
@@ -61,7 +62,12 @@ def test_clean_nb_file(tmp_path: Path):
     assert nb.cells[1].outputs[0].execution_count == 1
 
     # clean meta, execution_count
-    result = clean_nb_file(test_nb_path)
+    # path as list
+    result = clean_nb_file([test_nb_path])
+    captured = capsys.readouterr()
+    out = captured.out
+    assert out.startswith("done:")
+    assert "test_clean_nb_file0/test_nb_2.ipynb" in out
     assert len(result) == 1
     nb = read_nb(result[0])
     assert nb == nb_clean
@@ -69,3 +75,6 @@ def test_clean_nb_file(tmp_path: Path):
     # try clean cleaned
     result = clean_nb_file(test_nb_path)
     assert len(result) == 0
+    captured = capsys.readouterr()
+    out = captured.out
+    assert not out.strip()

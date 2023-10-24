@@ -27,9 +27,7 @@ class ClearMetadataPreprocessorRes(ClearMetadataPreprocessor):
         if self.clear_cell_metadata and cell.cell_type == "code":
             # Remove metadata
             current_metadata = cell.metadata
-            cell, resources = super().preprocess_cell(
-                cell, resources, cell_index
-            )
+            cell, resources = super().preprocess_cell(cell, resources, cell_index)
             if cell.metadata != current_metadata:
                 resources["changed"] = True
         return cell, resources
