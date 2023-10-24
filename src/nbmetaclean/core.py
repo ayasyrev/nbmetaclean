@@ -1,37 +1,66 @@
-import json
+# from __future__ import annotations
+
 from pathlib import Path
+from typing import Union
 
 import nbformat
+from nbformat.notebooknode import NotebookNode
 
 
-NB_METADATA_PRESERVE = ("language_info", "name")
-CELL_METADATA_PRESERVE = ()
+def read_nb(path: Union[Path, str]) -> NotebookNode:
+    """Read notebook from filename.
 
+    Args:
+        path (Union[str, PosixPath): Notebook filename.
 
-def read_nb(filename: Path) -> dict:
-    """Read a notebook as json from file."""
-    return json.loads(open(filename, "r", encoding="utf-8").read())
-
-
-def write_nb(nb: dict, filename: Path) -> None:
-    """Write a notebook to file."""
-    nbformat.write(
-        nbformat.reads(json.dumps(nb), as_version=nbformat.NO_CONVERT),
-        filename,
-        version=nbformat.NO_CONVERT,
-    )
-
-
-def clear_execution_count(cell: dict) -> bool:
-    """Clear the execution count of a cell.
-    If cleared, return True.
+    Returns:
+        Notebook: Jupyter Notebook.
     """
-    changed = False
-    if cell.get("execution_count") is not None:
-        cell["execution_count"] = None
-        changed = True
-    if "outputs" in cell:
-        for output in cell["outputs"]:
-            if clear_execution_count(output):
-                changed = True
-    return changed
+    with Path(path).open("r", encoding="utf-8") as fh:
+        nb: NotebookNode = nbformat.read(fh, as_version=nbformat.NO_CONVERT)  # type: ignore
+    return nb
+
+
+def write_nb(
+    nb: NotebookNode,
+    path: Union[Path, str],
+    as_version: nbformat.Sentinel = nbformat.NO_CONVERT,
+) -> Path:
+    """Write notebook to file
+
+    Args:
+        nb (Notebook): Notebook to write
+        path (Union[str, PosixPath]): filename to write
+        as_version (_type_, optional): Nbformat version. Defaults to nbformat.NO_CONVERT.
+    Returns:
+        Path: Filename of writed Nb.
+    """
+    filename = Path(path)
+    if filename.suffix != ".ipynb":
+        filename = filename.with_suffix(".ipynb")
+    with filename.open("w", encoding="utf-8") as fh:
+        nbformat.write(nb, fh, version=as_version)  # type: ignore
+    return filename
+
+
+def get_nb_names(path: Union[Path, str, None] = None) -> list[Path]:
+    """Return list of notebooks from `path`. If no `path` return notebooks from current folder.
+
+    Args:
+        path (Union[Path, str, None]): Path for nb or folder with notebooks.
+
+    Raises:
+        sys.exit: If filename or dir not exists or not nb file.
+
+    Returns:
+        List[Path]: List of notebooks names.
+    """
+    nb_path = Path(path or ".")
+
+    if not nb_path.exists():
+        raise FileNotFoundError(f"{nb_path} not exists!")
+
+    if nb_path.is_dir():
+        return list(nb_path.rglob("*.ipynb"))
+
+    return [nb_path]

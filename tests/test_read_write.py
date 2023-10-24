@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from nbmetaclean.core import read_nb, write_nb
+from nbmetaclean.core import get_nb_names, read_nb, write_nb
 
 
 def test_read_nb():
@@ -16,11 +16,11 @@ def test_read_nb():
     assert len(cells) == 2
     # markdown
     assert cells[0]["cell_type"] == "markdown"
-    assert cells[0]["source"] == []
+    assert cells[0]["source"] == ""
     assert cells[0]["metadata"] == {}
     # code
     assert cells[1]["cell_type"] == "code"
-    assert cells[1]["source"] == []
+    assert cells[1]["source"] == ""
     assert cells[1]["execution_count"] is None
     assert cells[1]["metadata"] == {}
     assert cells[1]["outputs"] == []
@@ -36,3 +36,21 @@ def test_write_nb(tmp_path: Path):
     with open(file, "r", encoding="utf-8") as fh:
         org_text = fh.read()
     assert res_text == org_text
+
+
+def test_get_nb_names():
+    """test get_nb_names"""
+    path = Path("tests/test_nbs")
+    file = path / "test_nb_1.ipynb"
+    names = get_nb_names(file.parent)
+    assert len(names) == 1
+    assert names[0] == file
+    names = get_nb_names(path)
+    assert len(names) == 1
+    assert names[0] == file
+    try:
+        get_nb_names("wrong_name")
+        assert False
+    except FileNotFoundError as ex:
+        assert True
+        assert str(ex) == "wrong_name not exists!"
