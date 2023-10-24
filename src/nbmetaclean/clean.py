@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from pathlib import Path
 from typing import Optional, Union
 
@@ -22,16 +24,14 @@ class ClearMetadataPreprocessorRes(ClearMetadataPreprocessor):
         cell_index: int,
     ) -> (NotebookNode, ResourcesDict):
         """Process cell."""
-        if self.clear_cell_metadata:
-            if cell.cell_type == "code":
-                # Remove metadata
-                if cell.metadata:
-                    current_metadata = cell.metadata
-                    cell, resources = super().preprocess_cell(
-                        cell, resources, cell_index
-                    )
-                    if cell.metadata != current_metadata:
-                        resources["changed"] = True
+        if self.clear_cell_metadata and cell.cell_type == "code":
+            # Remove metadata
+            current_metadata = cell.metadata
+            cell, resources = super().preprocess_cell(
+                cell, resources, cell_index
+            )
+            if cell.metadata != current_metadata:
+                resources["changed"] = True
         return cell, resources
 
     def preprocess(
@@ -39,11 +39,10 @@ class ClearMetadataPreprocessorRes(ClearMetadataPreprocessor):
     ) -> (NotebookNode, ResourcesDict):
         """Process notebook."""
         if self.clear_notebook_metadata:
-            if nb.metadata:
-                current_metadata = nb.metadata
-                nb, resources = super().preprocess(nb, resources)
-                if nb.metadata != current_metadata:
-                    resources["changed"] = True
+            current_metadata = nb.metadata
+            nb, resources = super().preprocess(nb, resources)
+            if nb.metadata != current_metadata:
+                resources["changed"] = True
         for index, cell in enumerate(nb.cells):
             nb.cells[index], resources = self.preprocess_cell(cell, resources, index)
         return nb, resources
@@ -66,10 +65,9 @@ class ClearExecutionCountPreprocessor(Preprocessor):
                 cell.execution_count = None
                 resources["changed"] = True
             for output in cell.outputs:
-                if "execution_count" in output:
-                    if output.execution_count is not None:
-                        output.execution_count = None
-                        resources["changed"] = True
+                if "execution_count" in output and output.execution_count is not None:
+                    output.execution_count = None
+                    resources["changed"] = True
         return cell, resources
 
 
