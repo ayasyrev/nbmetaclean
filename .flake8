@@ -2,6 +2,7 @@
 select = C,E,F,W
 max-complexity = 10
 max-line-length = 120
+extend-ignore = W503
 disable-noqa = True
 application-import-names = nbmetaclean, tests
 import-order-style = google
