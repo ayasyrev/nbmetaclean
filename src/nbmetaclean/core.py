@@ -1,13 +1,13 @@
-# from __future__ import annotations
-
-from pathlib import Path
-from typing import Union
+from pathlib import Path, PosixPath
+from typing import Optional, TypeVar
 
 import nbformat
 from nbformat.notebooknode import NotebookNode
 
+PathOrStr = TypeVar("PathOrStr", str, Path, PosixPath)
 
-def read_nb(path: Union[Path, str]) -> NotebookNode:
+
+def read_nb(path: PathOrStr) -> NotebookNode:
     """Read notebook from filename.
 
     Args:
@@ -17,13 +17,13 @@ def read_nb(path: Union[Path, str]) -> NotebookNode:
         Notebook: Jupyter Notebook.
     """
     with Path(path).open("r", encoding="utf-8") as fh:
-        nb: NotebookNode = nbformat.read(fh, as_version=nbformat.NO_CONVERT)  # type: ignore
+        nb: NotebookNode = nbformat.read(fh, as_version=nbformat.NO_CONVERT)
     return nb
 
 
 def write_nb(
     nb: NotebookNode,
-    path: Union[Path, str],
+    path: PathOrStr,
     as_version: nbformat.Sentinel = nbformat.NO_CONVERT,
 ) -> Path:
     """Write notebook to file
@@ -43,7 +43,7 @@ def write_nb(
     return filename
 
 
-def get_nb_names(path: Union[Path, str, None] = None) -> list[Path]:
+def get_nb_names(path: Optional[PathOrStr] = None) -> list[Path]:
     """Return list of notebooks from `path`. If no `path` return notebooks from current folder.
 
     Args:

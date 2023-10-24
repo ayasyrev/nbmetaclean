@@ -37,16 +37,22 @@ def test_write_nb(tmp_path: Path):
         org_text = fh.read()
     assert res_text == org_text
 
+    # write with name w/o suffix
+    result = write_nb(nb, tmp_path / "test_nb_1")
+    assert result == tmp_path / "test_nb_1.ipynb"
+
 
 def test_get_nb_names():
     """test get_nb_names"""
     path = Path("tests/test_nbs")
     file = path / "test_nb_1.ipynb"
-    names = get_nb_names(file.parent)
+    names = get_nb_names(file)
     assert len(names) == 1
+    names.sort(key=lambda x: x.name)
     assert names[0] == file
     names = get_nb_names(path)
-    assert len(names) == 1
+    assert len(names) == 3
+    names.sort(key=lambda x: x.name)
     assert names[0] == file
     try:
         get_nb_names("wrong_name")
