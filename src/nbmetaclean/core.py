@@ -45,11 +45,17 @@ def write_nb(
     return filename
 
 
-def get_nb_names(path: Optional[PathOrStr] = None) -> list[Path]:
+def get_nb_names(
+        path: Optional[PathOrStr] = None,
+        recursive: bool = True,
+        filter_hidden: bool = True,
+) -> list[Path]:
     """Return list of notebooks from `path`. If no `path` return notebooks from current folder.
 
     Args:
         path (Union[Path, str, None]): Path for nb or folder with notebooks.
+        recursive bool: Recursive search.
+        filter_hidden bool: Filter hidden paths.
 
     Raises:
         sys.exit: If filename or dir not exists or not nb file.
@@ -63,6 +69,18 @@ def get_nb_names(path: Optional[PathOrStr] = None) -> list[Path]:
         raise FileNotFoundError(f"{nb_path} not exists!")
 
     if nb_path.is_dir():
-        return list(nb_path.rglob("*.ipynb"))
+        result = []
+        for item in nb_path.iterdir():
+            if item.is_file() and item.suffix == ".ipynb":
+                if filter_hidden and item.name.startswith("."):
+                    continue
+                result.append(item)
+            if item.is_dir():
+                if filter_hidden and item.name.startswith("."):
+                    continue
+                if recursive:
+                    result.extend(get_nb_names(item, recursive, filter_hidden))
+
+        return result
 
     return [nb_path]

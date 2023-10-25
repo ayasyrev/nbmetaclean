@@ -55,12 +55,12 @@ def clean_cell_metadata(
 ) -> bool:
     """Clean cell metadata."""
     changed = False
-    if cell.metadata:
+    if cell.get("metadata", None):
         old_metadata = copy.deepcopy(cell.metadata)
         cell.metadata = new_metadata(cell.metadata, preserve_cell_metadata_mask)
         if cell.metadata != old_metadata:
             changed = True
-    if clear_outputs and hasattr(cell, "outputs") and cell.outputs:
+    if clear_outputs and hasattr(cell, "outputs") and cell.get("outputs", None):
         cell.outputs = []
         changed = True
     if (
@@ -72,10 +72,10 @@ def clean_cell_metadata(
         changed = True
     if hasattr(cell, "outputs") and cell.outputs:
         for output in cell.outputs:
-            if clear_execution_count and output.execution_count:
+            if clear_execution_count and output.get("execution_count", None):
                 output.execution_count = None
                 changed = True
-            if output.metadata:
+            if output.get("metadata", None):
                 old_metadata = copy.deepcopy(output.metadata)
                 output.metadata = new_metadata(
                     output.metadata, preserve_cell_metadata_mask
@@ -127,7 +127,10 @@ def clean_nb(
 
 def clean_nb_file(
     path: Union[PathOrStr, list[PathOrStr]],
+    clear_nb_metadata: bool = True,
+    clear_cell_metadata: bool = True,
     clear_execution_count: bool = True,
+    clear_outputs: bool = False,
     as_version: nbformat.Sentinel = nbformat.NO_CONVERT,
     silent: bool = False,
 ) -> list[Path]:
@@ -150,6 +153,9 @@ def clean_nb_file(
         nb, result = clean_nb(
             nb,
             clear_execution_count=clear_execution_count,
+            clear_outputs=clear_outputs,
+            clear_nb_metadata=clear_nb_metadata,
+            clear_cell_metadata=clear_cell_metadata,
         )
         if result:
             cleaned.append(filename)
