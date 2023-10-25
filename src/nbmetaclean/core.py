@@ -76,9 +76,9 @@ def get_nb_names(
                     continue
                 result.append(item)
             if item.is_dir():
-                if filter_hidden and item.name.startswith("."):
-                    continue
                 if recursive:
+                    if filter_hidden and item.name.startswith("."):
+                        continue
                     result.extend(get_nb_names(item, recursive, filter_hidden))
 
         return result
