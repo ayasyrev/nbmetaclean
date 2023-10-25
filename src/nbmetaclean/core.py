@@ -46,9 +46,9 @@ def write_nb(
 
 
 def get_nb_names(
-        path: Optional[PathOrStr] = None,
-        recursive: bool = True,
-        filter_hidden: bool = True,
+    path: Optional[PathOrStr] = None,
+    recursive: bool = True,
+    filter_hidden: bool = True,
 ) -> list[Path]:
     """Return list of notebooks from `path`. If no `path` return notebooks from current folder.
 

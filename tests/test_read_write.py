@@ -60,3 +60,53 @@ def test_get_nb_names():
     except FileNotFoundError as ex:
         assert True
         assert str(ex) == "wrong_name not exists!"
+
+
+def test_get_nb_names_recursive_hidden(tmp_path: Path):
+    """test get_nb_names recursive hidden"""
+    suffix = ".ipynb"
+    # add one nb
+    with open((tmp_path / "tst").with_suffix(suffix), "w", encoding="utf-8") as _:
+        pass
+    files = get_nb_names(tmp_path)
+    assert len(files) == 1
+
+    # add hidden nb
+    with open((tmp_path / ".tst").with_suffix(suffix), "w", encoding="utf-8") as _:
+        pass
+    files = get_nb_names(tmp_path)
+    assert len(files) == 1
+    files = get_nb_names(tmp_path, filter_hidden=False)
+    assert len(files) == 2
+    # add simple file
+    with open((tmp_path / "simple"), "w", encoding="utf-8") as _:
+        pass
+    files = get_nb_names(tmp_path)
+    assert len(files) == 1
+
+    # add dir with one nb, hidden nb
+    new_dir = tmp_path / "new_dir"
+    new_dir.mkdir()
+    with open((new_dir / "tst").with_suffix(suffix), "w", encoding="utf-8") as _:
+        pass
+    with open((new_dir / ".tst").with_suffix(suffix), "w", encoding="utf-8") as _:
+        pass
+    files = get_nb_names(tmp_path)
+    assert len(files) == 2
+    files = get_nb_names(tmp_path, filter_hidden=False)
+    assert len(files) == 4
+
+    files = get_nb_names(tmp_path, recursive=False)
+    assert len(files) == 1
+
+    # add hidden dir
+    hid_dir = tmp_path / ".hid_dir"
+    hid_dir.mkdir()
+    with open((hid_dir / "tst").with_suffix(suffix), "w", encoding="utf-8") as _:
+        pass
+    with open((hid_dir / ".tst").with_suffix(suffix), "w", encoding="utf-8") as _:
+        pass
+    files = get_nb_names(tmp_path, filter_hidden=False)
+    assert len(files) == 6
+    files = get_nb_names(tmp_path)
+    assert len(files) == 2

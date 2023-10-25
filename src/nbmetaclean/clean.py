@@ -1,5 +1,6 @@
 from __future__ import annotations
 import copy
+import os
 
 from pathlib import Path
 from typing import Optional, Union
@@ -8,6 +9,7 @@ import nbformat
 
 from nbformat.notebooknode import NotebookNode
 from rich.progress import track
+from rich import print as rprint
 
 from .core import read_nb, write_nb, PathOrStr
 
@@ -131,6 +133,7 @@ def clean_nb_file(
     clear_cell_metadata: bool = True,
     clear_execution_count: bool = True,
     clear_outputs: bool = False,
+    preserve_timestamp: bool = True,
     as_version: nbformat.Sentinel = nbformat.NO_CONVERT,
     silent: bool = False,
 ) -> list[Path]:
@@ -138,16 +141,20 @@ def clean_nb_file(
 
     Args:
         path (Union[str, PosixPath]): Notebook filename or list of names.
+        clear_nb_metadata (bool): Clear notebook metadata. Defaults to True.
+        clear_cell_metadata (bool): Clear cell metadata. Defaults to True.
+        clear_outputs (bool): Clear outputs. Defaults to False.
+        preserve_timestamp (bool): Preserve timestamp. Defaults to True.
         as_version (int, optional): Nbformat version. Defaults to 4.
         clear_execution_count (bool, optional): Clean execution count. Defaults to True.
-        silent (bool, optional): Silent mode. Defaults to False.
+        silent (bool): Silent mode. Defaults to False.
 
     Returns:
         List[Path]: List of cleaned notebooks
     """
     if not isinstance(path, list):
         path = [path]
-    cleaned: list[PathOrStr] = []
+    cleaned: list[Path] = []
     for filename in track(path, transient=True):
         nb = read_nb(filename)
         nb, result = clean_nb(
@@ -159,7 +166,11 @@ def clean_nb_file(
         )
         if result:
             cleaned.append(filename)
+            if preserve_timestamp:
+                stat = filename.stat()
             write_nb(nb, filename, as_version)
+            if preserve_timestamp:
+                os.utime(filename, (stat.st_atime, stat.st_mtime))
             if not silent:
-                print(f"done: {filename}")
+                rprint(f"done: {filename}")
     return cleaned
