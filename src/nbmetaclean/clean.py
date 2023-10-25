@@ -36,7 +36,7 @@ def get_meta_by_mask(
 
 def new_metadata(
     nb_meta: NotebookNode,
-    masks: Optional[list[tuple[str, str]]] = None,
+    masks: Optional[list[tuple[str, ...]]] = None,
 ) -> NotebookNode:
     """Clean notebooknode metadata."""
     if masks is None:
