@@ -13,8 +13,7 @@ from .clean import clean_nb_file
 class AppCfg:
     path: str = field_argument("path", default=".", nargs="*")
     as_version: int = field_argument(
-        default=nbformat.NO_CONVERT,
-        help="Save as version, default - no convert"
+        default=nbformat.NO_CONVERT, help="Save as version, default - no convert"
     )
     silent: bool = field_argument("-s", default=False, action="store_true")
 
