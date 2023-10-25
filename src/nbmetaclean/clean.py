@@ -8,6 +8,7 @@ import nbformat
 
 from nbformat.notebooknode import NotebookNode
 from rich.progress import track
+from rich import print as rprint
 
 from .core import read_nb, write_nb, PathOrStr
 
@@ -161,5 +162,5 @@ def clean_nb_file(
             cleaned.append(filename)
             write_nb(nb, filename, as_version)
             if not silent:
-                print(f"done: {filename}")
+                rprint(f"done: {filename}")
     return cleaned
