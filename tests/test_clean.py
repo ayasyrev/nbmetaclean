@@ -1,4 +1,5 @@
 import copy
+import os
 from pathlib import Path
 from nbformat.notebooknode import NotebookNode
 
@@ -164,34 +165,63 @@ def test_clean_nb_file(tmp_path: Path, capsys: CaptureFixture[str]):
     test_nb_path = write_nb(read_nb(path / nb_name), tmp_path / nb_name)
 
     # clean meta, leave execution_count
-    result = clean_nb_file(test_nb_path, clear_execution_count=False)
-    assert len(result) == 1
-    nb = read_nb(result[0])
+    cleaned = clean_nb_file(test_nb_path, clear_execution_count=False)
+    assert len(cleaned) == 1
+    nb = read_nb(cleaned[0])
     assert nb.metadata == nb_clean.metadata
     assert nb.cells[1].execution_count == 1
     assert nb.cells[1].outputs[0].execution_count == 1
 
     # clean meta, execution_count
     # path as list
-    result = clean_nb_file([test_nb_path])
+    cleaned = clean_nb_file([test_nb_path])
     captured = capsys.readouterr()
     out = captured.out
     assert out.startswith("done:")
     assert "test_clean_nb_file0/test_nb_2.ipynb" in out
-    assert len(result) == 1
-    nb = read_nb(result[0])
+    assert len(cleaned) == 1
+    nb = read_nb(cleaned[0])
     assert nb == nb_clean
 
     # try clean cleaned
-    result = clean_nb_file(test_nb_path)
-    assert len(result) == 0
+    cleaned = clean_nb_file(test_nb_path)
+    assert len(cleaned) == 0
     captured = capsys.readouterr()
     out = captured.out
     assert not out.strip()
 
     # silent
     test_nb_path = write_nb(read_nb(path / nb_name), tmp_path / nb_name)
-    result = clean_nb_file(test_nb_path, silent=True)
-    # assert len(result) == 1
+    cleaned = clean_nb_file(test_nb_path, silent=True)
+    assert len(cleaned) == 1
     captured = capsys.readouterr()
     assert not captured.out.strip()
+
+
+def test_clean_nb_file_timestamp(tmp_path: Path, capsys: CaptureFixture[str]):
+    """test clean_nb_file, timestamp"""
+    path = Path("tests/test_nbs")
+    nb_name = "test_nb_2.ipynb"
+    nb_stat = (path / nb_name).stat()
+
+    # prepare temp test notebook, set timestamp
+    test_nb_path = write_nb(read_nb(path / nb_name), tmp_path / nb_name)
+    os.utime(test_nb_path, (nb_stat.st_atime, nb_stat.st_mtime))
+    test_nb_stat = test_nb_path.stat()
+    assert test_nb_stat.st_atime == nb_stat.st_atime
+    assert test_nb_stat.st_mtime == nb_stat.st_mtime
+
+    cleaned = clean_nb_file(test_nb_path)
+    assert len(cleaned) == 1
+    cleaned_stat = cleaned[0].stat()
+    assert True
+    assert cleaned_stat.st_mtime == test_nb_stat.st_mtime
+
+    # dont preserve timestamp
+    test_nb_path = write_nb(read_nb(path / nb_name), tmp_path / nb_name)
+    os.utime(test_nb_path, (nb_stat.st_atime, nb_stat.st_mtime))
+    cleaned = clean_nb_file(test_nb_path, preserve_timestamp=False)
+    assert len(cleaned) == 1
+    cleaned_stat = cleaned[0].stat()
+    assert True
+    assert cleaned_stat.st_mtime != nb_stat.st_mtime
