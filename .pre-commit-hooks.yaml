@@ -1,0 +1,7 @@
+- id: nbclean
+  name: nbclean
+  description: Clean Jipyter Notebooks metadata and optionally output.
+  entry: nbclean
+  files: \.ipynb$
+  language: python
+  language_version: python3
