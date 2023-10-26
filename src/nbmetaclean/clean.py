@@ -93,7 +93,7 @@ def clean_nb(
     clear_cell_metadata: bool = True,
     clear_execution_count: bool = True,
     clear_outputs: bool = False,
-    preserve_nb_metadata_masks: Optional[list[tuple[str, str]],] = None,
+    preserve_nb_metadata_masks: Optional[list[tuple[str, ...]],] = None,
     preserve_cell_metadata_mask: Optional[str] = None,
 ) -> tuple[NotebookNode, bool]:
     """Clean notebook - metadata, execution_count, outputs.
