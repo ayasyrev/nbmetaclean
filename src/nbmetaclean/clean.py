@@ -155,7 +155,11 @@ def clean_nb_file(
     if not isinstance(path, list):
         path = [path]
     cleaned: list[Path] = []
-    for filename in track(path, transient=True):
+    for filename in track(
+        path,
+        transient=True,
+        description=f"cleaning {len(path)} nbs",
+    ):
         nb = read_nb(filename)
         nb, result = clean_nb(
             nb,
