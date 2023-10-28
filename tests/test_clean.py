@@ -18,7 +18,7 @@ from nbmetaclean.core import read_nb, write_nb
 
 def test_get_meta_by_mask():
     """test get_meta_by_mask"""
-    nb = read_nb(Path("tests/test_nbs/test_nb_2.ipynb"))
+    nb = read_nb(Path("tests/test_nbs/.test_nb_2_meta.ipynb"))
     nb_meta = nb.metadata
 
     # string as nb_meta
@@ -43,7 +43,7 @@ def test_get_meta_by_mask():
 
 def test_new_metadata():
     """test new_metadata"""
-    nb_meta = read_nb("tests/test_nbs/test_nb_2.ipynb").metadata
+    nb_meta = read_nb("tests/test_nbs/.test_nb_2_meta.ipynb").metadata
     new_meta = new_metadata(nb_meta)
     assert isinstance(new_meta, NotebookNode)
     assert not new_meta
@@ -53,7 +53,7 @@ def test_new_metadata():
 
 def test_clean_cell_metadata():
     """test clean_cell_metadata"""
-    test_nb = read_nb("tests/test_nbs/test_nb_2.ipynb")
+    test_nb = read_nb("tests/test_nbs/.test_nb_2_meta.ipynb")
 
     # clear outputs
     cell = copy.deepcopy(test_nb.cells[1])
@@ -101,7 +101,7 @@ def test_clean_cell_metadata():
 
 def test_clean_cell_metadata_markdown():
     """test clean_cell_metadata with markdown cell"""
-    test_nb = read_nb("tests/test_nbs/test_nb_2.ipynb")
+    test_nb = read_nb("tests/test_nbs/.test_nb_2_meta.ipynb")
     cell = copy.deepcopy(test_nb.cells[0])
     cell.metadata = {"some key": "some value"}
     changed = clean_cell_metadata(cell)
@@ -112,7 +112,7 @@ def test_clean_cell_metadata_markdown():
 def test_clean_nb():
     """test clean nb"""
     path = Path("tests/test_nbs")
-    nb_path = path / "test_nb_2.ipynb"
+    nb_path = path / ".test_nb_2_meta.ipynb"
     nb_clean = path / "test_nb_2_clean.ipynb"
     nb = read_nb(nb_path)
     assert nb.cells[1].execution_count == 1
@@ -158,7 +158,7 @@ def test_clean_nb():
 def test_clean_nb_file(tmp_path: Path, capsys: CaptureFixture[str]):
     """test clean nb file"""
     path = Path("tests/test_nbs")
-    nb_name = "test_nb_2.ipynb"
+    nb_name = ".test_nb_2_meta.ipynb"
     nb_clean = read_nb(path / "test_nb_2_clean.ipynb")
 
     # prepare temp test notebook
@@ -178,7 +178,7 @@ def test_clean_nb_file(tmp_path: Path, capsys: CaptureFixture[str]):
     captured = capsys.readouterr()
     out = captured.out
     assert out.startswith("done")
-    assert "test_clean_nb_file0/test_nb_2.ipynb" in out
+    assert "test_clean_nb_file0/.test_nb_2_meta.ipynb" in out
     assert len(cleaned) == 1
     nb = read_nb(cleaned[0])
     assert nb == nb_clean
@@ -201,7 +201,7 @@ def test_clean_nb_file(tmp_path: Path, capsys: CaptureFixture[str]):
 def test_clean_nb_file_timestamp(tmp_path: Path):
     """test clean_nb_file, timestamp"""
     path = Path("tests/test_nbs")
-    nb_name = "test_nb_2.ipynb"
+    nb_name = ".test_nb_2_meta.ipynb"
     nb_stat = (path / nb_name).stat()
 
     # prepare temp test notebook, set timestamp
