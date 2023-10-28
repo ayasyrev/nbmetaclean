@@ -43,7 +43,6 @@ def app() -> None:
         print(f"notebooks to check: {len(nb_files)} ")
     cleaned = clean_nb_file(
         nb_files,
-        as_version=cfg.as_version,
         silent=cfg.silent,
         preserve_timestamp=not cfg.not_pt,
     )
