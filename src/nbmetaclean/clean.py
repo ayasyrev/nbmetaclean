@@ -5,8 +5,6 @@ import os
 from pathlib import Path
 from typing import Optional, Union
 
-import nbformat
-
 from nbformat.notebooknode import NotebookNode
 
 from .core import read_nb, write_nb, PathOrStr
@@ -132,7 +130,6 @@ def clean_nb_file(
     clear_execution_count: bool = True,
     clear_outputs: bool = False,
     preserve_timestamp: bool = True,
-    as_version: nbformat.Sentinel = nbformat.NO_CONVERT,
     silent: bool = False,
 ) -> list[Path]:
     """Clean metadata and execution count from notebook.
@@ -155,7 +152,6 @@ def clean_nb_file(
     cleaned: list[Path] = []
     to_clean = len(path)
     for num, filename in enumerate(path):
-        # description=f"cleaning {len(path)} nbs",
         nb = read_nb(filename)
         nb, result = clean_nb(
             nb,
@@ -168,7 +164,7 @@ def clean_nb_file(
             cleaned.append(filename)
             if preserve_timestamp:
                 stat = filename.stat()
-            write_nb(nb, filename, as_version)
+            write_nb(nb, filename)
             if preserve_timestamp:
                 os.utime(filename, (stat.st_atime, stat.st_mtime))
             if not silent:
