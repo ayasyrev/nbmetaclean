@@ -26,7 +26,6 @@ def read_nb(path: PathOrStr) -> NotebookNode:
 def write_nb(
     nb: NotebookNode,
     path: PathOrStr,
-    as_version: nbformat.Sentinel = nbformat.NO_CONVERT,
 ) -> Path:
     """Write notebook to file
 
@@ -41,7 +40,7 @@ def write_nb(
     if filename.suffix != ".ipynb":
         filename = filename.with_suffix(".ipynb")
     with filename.open("w", encoding="utf-8") as fh:
-        nbformat.write(nb, fh, version=as_version)  # type: ignore
+        nbformat.write(nb, fh)  # type: ignore
     return filename
 
 

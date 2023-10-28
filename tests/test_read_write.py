@@ -51,9 +51,11 @@ def test_get_nb_names():
     names.sort(key=lambda x: x.name)
     assert names[0] == file
     names = get_nb_names(path)
-    assert len(names) == 3
+    assert len(names) == 2
     names.sort(key=lambda x: x.name)
     assert names[0] == file
+    names = get_nb_names(path, filter_hidden=False)
+    assert len(names) == 3
     try:
         get_nb_names("wrong_name")
         assert False

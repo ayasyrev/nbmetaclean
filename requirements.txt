@@ -1,3 +1,1 @@
 nbformat
-rich
-argparsecfg
