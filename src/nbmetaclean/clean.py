@@ -8,8 +8,6 @@ from typing import Optional, Union
 import nbformat
 
 from nbformat.notebooknode import NotebookNode
-from rich.progress import track
-from rich import print as rprint
 
 from .core import read_nb, write_nb, PathOrStr
 
@@ -155,11 +153,9 @@ def clean_nb_file(
     if not isinstance(path, list):
         path = [path]
     cleaned: list[Path] = []
-    for filename in track(
-        path,
-        transient=True,
-        description=f"cleaning {len(path)} nbs",
-    ):
+    to_clean = len(path)
+    for num, filename in enumerate(path):
+        # description=f"cleaning {len(path)} nbs",
         nb = read_nb(filename)
         nb, result = clean_nb(
             nb,
@@ -176,5 +172,5 @@ def clean_nb_file(
             if preserve_timestamp:
                 os.utime(filename, (stat.st_atime, stat.st_mtime))
             if not silent:
-                rprint(f"done: {filename}")
+                print(f"done {num + 1} of {to_clean}: {filename}")
     return cleaned

@@ -4,7 +4,6 @@ from pathlib import Path
 import nbformat
 from argparsecfg.app import App
 from argparsecfg.core import field_argument
-from rich import print as rprint
 
 from .clean import clean_nb_file
 from .core import get_nb_names
@@ -41,15 +40,15 @@ def clean(
         try:
             nb_files.extend(get_nb_names(path))
         except FileNotFoundError:
-            rprint(f"{path} not exists!")
-    rprint(f"find notebooks: {len(nb_files)} ")
+            print(f"{path} not exists!")
+    print(f"find notebooks: {len(nb_files)} ")
     cleaned = clean_nb_file(
         nb_files,
         as_version=cfg.as_version,
         silent=cfg.silent,
         preserve_timestamp=not cfg.not_pt,
     )
-    rprint(f"cleaned nbs: {len(cleaned)}")
+    print(f"cleaned nbs: {len(cleaned)}")
 
 
 if __name__ == "__main__":

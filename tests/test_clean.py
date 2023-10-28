@@ -177,7 +177,7 @@ def test_clean_nb_file(tmp_path: Path, capsys: CaptureFixture[str]):
     cleaned = clean_nb_file([test_nb_path])
     captured = capsys.readouterr()
     out = captured.out
-    assert out.startswith("done:")
+    assert out.startswith("done")
     assert "test_clean_nb_file0/test_nb_2.ipynb" in out
     assert len(cleaned) == 1
     nb = read_nb(cleaned[0])
@@ -198,7 +198,7 @@ def test_clean_nb_file(tmp_path: Path, capsys: CaptureFixture[str]):
     assert not captured.out.strip()
 
 
-def test_clean_nb_file_timestamp(tmp_path: Path, capsys: CaptureFixture[str]):
+def test_clean_nb_file_timestamp(tmp_path: Path):
     """test clean_nb_file, timestamp"""
     path = Path("tests/test_nbs")
     nb_name = "test_nb_2.ipynb"
