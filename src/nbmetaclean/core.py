@@ -1,30 +1,26 @@
 from __future__ import annotations
 
-from pathlib import Path, PosixPath
-from typing import Optional, TypeVar
+import json
+from pathlib import Path
+from typing import Optional
 
-import nbformat
-from nbformat.notebooknode import NotebookNode
-
-PathOrStr = TypeVar("PathOrStr", str, Path, PosixPath)
+from .typing import NbNode, PathOrStr
 
 
-def read_nb(path: PathOrStr) -> NotebookNode:
+def read_nb(path: PathOrStr) -> NbNode:
     """Read notebook from filename.
 
     Args:
         path (Union[str, PosixPath): Notebook filename.
 
     Returns:
-        Notebook: Jupyter Notebook.
+        Notebook: Jupyter Notebook as dict.
     """
-    with Path(path).open("r", encoding="utf-8") as fh:
-        nb: NotebookNode = nbformat.read(fh, as_version=nbformat.NO_CONVERT)
-    return nb
+    return json.load(open(path, "r", encoding="utf-8"))
 
 
 def write_nb(
-    nb: NotebookNode,
+    nb: NbNode,
     path: PathOrStr,
 ) -> Path:
     """Write notebook to file
@@ -32,7 +28,6 @@ def write_nb(
     Args:
         nb (Notebook): Notebook to write
         path (Union[str, PosixPath]): filename to write
-        as_version (_type_, optional): Nbformat version. Defaults to nbformat.NO_CONVERT.
     Returns:
         Path: Filename of writed Nb.
     """
@@ -40,7 +35,16 @@ def write_nb(
     if filename.suffix != ".ipynb":
         filename = filename.with_suffix(".ipynb")
     with filename.open("w", encoding="utf-8") as fh:
-        nbformat.write(nb, fh)  # type: ignore
+        fh.write(
+            json.dumps(
+                nb,
+                indent=1,
+                separators=(",", ": "),
+                ensure_ascii=False,
+                sort_keys=True,
+            )
+            + "\n",
+        )
     return filename
 
 
