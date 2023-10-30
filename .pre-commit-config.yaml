@@ -1,0 +1,7 @@
+repos:
+- repo: https://github.com/ayasyrev/nbmetaclean
+  rev: 0.0.5
+  hooks:
+  -   id: nbclean
+      name: nbclean
+      entry: nbclean
