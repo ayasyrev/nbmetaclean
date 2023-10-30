@@ -5,93 +5,87 @@ import os
 from pathlib import Path
 from typing import Optional, Union
 
-from nbformat.notebooknode import NotebookNode
-
 from .core import read_nb, write_nb, PathOrStr
-
+from .typing import NbNode, Metadata
 
 NB_METADATA_PRESERVE_MASKS = [
     ("language_info", "name"),
 ]
 
 
-def get_meta_by_mask(
-    nb_meta: Union[NotebookNode, str],
-    mask: Optional[tuple[str, ...]] = None,
-) -> Union[NotebookNode, str]:
-    """Get metadata by mask."""
+def filter_meta_mask(
+    nb_meta: Union[Metadata, str],
+    mask: [tuple[str, ...]] = None,
+) -> Union[Metadata, str]:
+    """Filter metadata by mask. If no mask return empty dict."""
     if isinstance(nb_meta, str) or mask == ():
         return nb_meta
     if mask is None:
-        return NotebookNode()
-    result = {}
+        return {}
+    new_meta = {}
     value = nb_meta.get(mask[0])
     if value is not None:
         new_mask = tuple(mask[1:])
-        result[mask[0]] = get_meta_by_mask(value, new_mask) or value
-    return NotebookNode(result)
+        new_meta[mask[0]] = filter_meta_mask(value, new_mask) or value
+    return new_meta
 
 
-def new_metadata(
-    nb_meta: NotebookNode,
+def filter_metadata(
+    nb_meta: Metadata,
     masks: Optional[list[tuple[str, ...]]] = None,
-) -> NotebookNode:
+) -> Metadata:
     """Clean notebooknode metadata."""
     if masks is None:
-        return NotebookNode()
+        return {}
     filtered_meta = {}
     for mask in masks:
-        filtered_meta.update(get_meta_by_mask(nb_meta, mask))
-    return NotebookNode(filtered_meta)
+        filtered_meta.update(filter_meta_mask(nb_meta, mask))
+    return filtered_meta
 
 
 def clean_cell_metadata(
-    cell: NotebookNode,
+    cell: NbNode,
     clear_execution_count: bool = True,
     clear_outputs: bool = False,
     preserve_cell_metadata_mask: Optional[list[tuple[str, ...]]] = None,
 ) -> bool:
     """Clean cell metadata."""
     changed = False
-    if cell.get("metadata", None):
-        old_metadata = copy.deepcopy(cell.metadata)
-        cell.metadata = new_metadata(cell.metadata, preserve_cell_metadata_mask)
-        if cell.metadata != old_metadata:
+    if metadata := cell.get("metadata", None):
+        old_metadata = copy.deepcopy(metadata)
+        cell["metadata"] = filter_metadata(metadata, preserve_cell_metadata_mask)
+        if cell["metadata"] != old_metadata:
             changed = True
-    if clear_outputs and hasattr(cell, "outputs") and cell.get("outputs", None):
-        cell.outputs = []
+    if clear_outputs and cell.get("outputs"):
+        cell["outputs"] = []
         changed = True
-    if (
-        clear_execution_count
-        and hasattr(cell, "execution_count")
-        and cell.execution_count
-    ):
-        cell.execution_count = None
+    if clear_execution_count and cell.get("execution_count"):
+        cell["execution_count"] = None
         changed = True
-    if hasattr(cell, "outputs") and cell.outputs:
-        for output in cell.outputs:
+    if outputs := cell.get("outputs"):
+        for output in outputs:
             if clear_execution_count and output.get("execution_count", None):
-                output.execution_count = None
+                output["execution_count"] = None
                 changed = True
-            if output.get("metadata", None):
-                old_metadata = copy.deepcopy(output.metadata)
-                output.metadata = new_metadata(
-                    output.metadata, preserve_cell_metadata_mask
+            if metadata := output.get("metadata", None):
+                old_metadata = copy.deepcopy(metadata)
+                output["metadata"] = filter_metadata(
+                    metadata, preserve_cell_metadata_mask
                 )
-                if output.metadata != old_metadata:
+                if output["metadata"] != old_metadata:
                     changed = True
     return changed
 
 
 def clean_nb(
-    nb: NotebookNode,
+    nb: NbNode,
     clear_nb_metadata: bool = True,
     clear_cell_metadata: bool = True,
     clear_execution_count: bool = True,
     clear_outputs: bool = False,
     preserve_nb_metadata_masks: Optional[list[tuple[str, ...]],] = None,
     preserve_cell_metadata_mask: Optional[str] = None,
-) -> tuple[NotebookNode, bool]:
+) -> tuple[NbNode, bool]:
     """Clean notebook - metadata, execution_count, outputs.
 
     Args:
@@ -103,14 +97,14 @@ def clean_nb(
         bool: True if changed.
     """
     changed = False
-    if clear_nb_metadata and nb.metadata:
-        old_metadata = copy.deepcopy(nb.metadata)
+    if clear_nb_metadata and (metadata := nb.get("metadata")):
+        old_metadata = copy.deepcopy(metadata)
         masks = preserve_nb_metadata_masks or NB_METADATA_PRESERVE_MASKS
-        nb.metadata = new_metadata(nb.metadata, masks=masks)
-        if nb.metadata != old_metadata:
+        nb["metadata"] = filter_metadata(metadata, masks=masks)
+        if nb["metadata"] != old_metadata:
             changed = True
     if clear_cell_metadata:
-        for cell in nb.cells:
+        for cell in nb["cells"]:
             result = clean_cell_metadata(
                 cell,
                 clear_execution_count=clear_execution_count,
@@ -140,7 +134,6 @@ def clean_nb_file(
         clear_cell_metadata (bool): Clear cell metadata. Defaults to True.
         clear_outputs (bool): Clear outputs. Defaults to False.
         preserve_timestamp (bool): Preserve timestamp. Defaults to True.
-        as_version (int, optional): Nbformat version. Defaults to 4.
         clear_execution_count (bool, optional): Clean execution count. Defaults to True.
         silent (bool): Silent mode. Defaults to False.
 

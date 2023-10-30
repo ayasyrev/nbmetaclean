@@ -16,11 +16,11 @@ def test_read_nb():
     assert len(cells) == 2
     # markdown
     assert cells[0]["cell_type"] == "markdown"
-    assert cells[0]["source"] == ""
+    assert cells[0]["source"] == []
     assert cells[0]["metadata"] == {}
     # code
     assert cells[1]["cell_type"] == "code"
-    assert cells[1]["source"] == ""
+    assert cells[1]["source"] == []
     assert cells[1]["execution_count"] is None
     assert cells[1]["metadata"] == {}
     assert cells[1]["outputs"] == []
