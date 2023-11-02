@@ -5,7 +5,8 @@ import os
 from pathlib import Path
 from typing import Optional, Union
 
-from .core import read_nb, write_nb, PathOrStr
+from nbmetaclean.core import read_nb, write_nb
+
 from .typing import NbNode, Metadata
 
 NB_METADATA_PRESERVE_MASKS = [
@@ -14,11 +15,11 @@ NB_METADATA_PRESERVE_MASKS = [
 
 
 def filter_meta_mask(
-    nb_meta: Union[Metadata, str],
+    nb_meta: Union[str, int, Metadata],
     mask: [tuple[str, ...]] = None,
-) -> Union[Metadata, str]:
+) -> Union[str, int, Metadata]:
     """Filter metadata by mask. If no mask return empty dict."""
-    if isinstance(nb_meta, str) or mask == ():
+    if isinstance(nb_meta, (str, int)) or mask == ():
         return nb_meta
     if mask is None:
         return {}
@@ -37,9 +38,9 @@ def filter_metadata(
     """Clean notebooknode metadata."""
     if masks is None:
         return {}
-    filtered_meta = {}
+    filtered_meta: Metadata = {}
     for mask in masks:
-        filtered_meta.update(filter_meta_mask(nb_meta, mask))
+        filtered_meta.update(filter_meta_mask(nb_meta, mask))  # type: ignore
     return filtered_meta
 
 
@@ -84,7 +85,7 @@ def clean_nb(
     clear_execution_count: bool = True,
     clear_outputs: bool = False,
     preserve_nb_metadata_masks: Optional[list[tuple[str, ...]],] = None,
-    preserve_cell_metadata_mask: Optional[str] = None,
+    preserve_cell_metadata_mask: Optional[tuple[str, ...]] = None,
 ) -> tuple[NbNode, bool]:
     """Clean notebook - metadata, execution_count, outputs.
 
@@ -118,7 +119,7 @@ def clean_nb(
 
 
 def clean_nb_file(
-    path: Union[PathOrStr, list[PathOrStr]],
+    path: Union[Path, list[Path]],
     clear_nb_metadata: bool = True,
     clear_cell_metadata: bool = True,
     clear_execution_count: bool = True,
