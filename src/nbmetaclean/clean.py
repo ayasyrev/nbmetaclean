@@ -152,24 +152,20 @@ def clean_nb_file(
         except Exception as ex:
             errors.append((filename, ex))
             continue
-        try:
-            nb, result = clean_nb(
-                nb,
-                clear_execution_count=clear_execution_count,
-                clear_outputs=clear_outputs,
-                clear_nb_metadata=clear_nb_metadata,
-                clear_cell_metadata=clear_cell_metadata,
-            )
-            if result:
-                cleaned.append(filename)
-                if preserve_timestamp:
-                    stat = filename.stat()
-                write_nb(nb, filename)
-                if preserve_timestamp:
-                    os.utime(filename, (stat.st_atime, stat.st_mtime))
-                if not silent:
-                    print(f"done {num + 1} of {to_clean}: {filename}")
-        except Exception as ex:
-            errors.append((filename, ex))
-            continue
+        nb, result = clean_nb(
+            nb,
+            clear_execution_count=clear_execution_count,
+            clear_outputs=clear_outputs,
+            clear_nb_metadata=clear_nb_metadata,
+            clear_cell_metadata=clear_cell_metadata,
+        )
+        if result:
+            cleaned.append(filename)
+            if preserve_timestamp:
+                stat = filename.stat()
+            write_nb(nb, filename)
+            if preserve_timestamp:
+                os.utime(filename, (stat.st_atime, stat.st_mtime))
+            if not silent:
+                print(f"done {num + 1} of {to_clean}: {filename}")
     return cleaned, errors

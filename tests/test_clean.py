@@ -194,8 +194,31 @@ def test_clean_nb_file(tmp_path: Path, capsys: CaptureFixture[str]):
     test_nb_path = write_nb(read_nb(path / nb_name), tmp_path / nb_name)
     cleaned, errors = clean_nb_file(test_nb_path, silent=True)
     assert len(cleaned) == 1
+    assert len(errors) == 0
     captured = capsys.readouterr()
     assert not captured.out.strip()
+
+
+def test_clean_nb_file_errors(capsys: CaptureFixture[str], tmp_path: Path):
+    """test clean_nb_file, errors"""
+    path = tmp_path / "wrong_name"
+    cleaned, errors = clean_nb_file(path)
+    assert len(cleaned) == 0
+    assert len(errors) == 1
+    assert errors[0][0] == path
+    assert "No such file or directory" in str(errors[0][1])
+    captured = capsys.readouterr()
+    assert not captured.out
+    assert not captured.err
+    with path.open("w", encoding="utf-8") as fh:
+        fh.write("wrong nb")
+    cleaned, errors = clean_nb_file(path)
+    assert "wrong_name" in str(errors[0])
+    assert len(cleaned) == 0
+    assert len(errors) == 1
+    captured = capsys.readouterr()
+    assert not captured.out
+    assert not captured.err
 
 
 def test_clean_nb_file_timestamp(tmp_path: Path):
@@ -213,6 +236,7 @@ def test_clean_nb_file_timestamp(tmp_path: Path):
 
     cleaned, errors = clean_nb_file(test_nb_path)
     assert len(cleaned) == 1
+    assert len(errors) == 0
     cleaned_stat = cleaned[0].stat()
     assert True
     assert cleaned_stat.st_mtime == test_nb_stat.st_mtime
@@ -222,6 +246,7 @@ def test_clean_nb_file_timestamp(tmp_path: Path):
     os.utime(test_nb_path, (nb_stat.st_atime, nb_stat.st_mtime))
     cleaned, errors = clean_nb_file(test_nb_path, preserve_timestamp=False)
     assert len(cleaned) == 1
+    assert len(errors) == 0
     cleaned_stat = cleaned[0].stat()
     assert True
     assert cleaned_stat.st_mtime != nb_stat.st_mtime
