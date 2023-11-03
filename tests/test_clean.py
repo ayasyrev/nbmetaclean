@@ -164,8 +164,9 @@ def test_clean_nb_file(tmp_path: Path, capsys: CaptureFixture[str]):
     test_nb_path = write_nb(read_nb(path / nb_name), tmp_path / nb_name)
 
     # clean meta, leave execution_count
-    cleaned = clean_nb_file(test_nb_path, clear_execution_count=False)
+    cleaned, errors = clean_nb_file(test_nb_path, clear_execution_count=False)
     assert len(cleaned) == 1
+    assert len(errors) == 0
     nb = read_nb(cleaned[0])
     assert nb["metadata"] == nb_clean["metadata"]
     assert nb["cells"][1]["execution_count"] == 1
@@ -173,7 +174,7 @@ def test_clean_nb_file(tmp_path: Path, capsys: CaptureFixture[str]):
 
     # clean meta, execution_count
     # path as list
-    cleaned = clean_nb_file([test_nb_path])
+    cleaned, errors = clean_nb_file([test_nb_path])
     captured = capsys.readouterr()
     out = captured.out
     assert out.startswith("done")
@@ -183,7 +184,7 @@ def test_clean_nb_file(tmp_path: Path, capsys: CaptureFixture[str]):
     assert nb == nb_clean
 
     # try clean cleaned
-    cleaned = clean_nb_file(test_nb_path)
+    cleaned, errors = clean_nb_file(test_nb_path)
     assert len(cleaned) == 0
     captured = capsys.readouterr()
     out = captured.out
@@ -191,7 +192,7 @@ def test_clean_nb_file(tmp_path: Path, capsys: CaptureFixture[str]):
 
     # silent
     test_nb_path = write_nb(read_nb(path / nb_name), tmp_path / nb_name)
-    cleaned = clean_nb_file(test_nb_path, silent=True)
+    cleaned, errors = clean_nb_file(test_nb_path, silent=True)
     assert len(cleaned) == 1
     captured = capsys.readouterr()
     assert not captured.out.strip()
@@ -210,7 +211,7 @@ def test_clean_nb_file_timestamp(tmp_path: Path):
     assert test_nb_stat.st_atime == nb_stat.st_atime
     assert test_nb_stat.st_mtime == nb_stat.st_mtime
 
-    cleaned = clean_nb_file(test_nb_path)
+    cleaned, errors = clean_nb_file(test_nb_path)
     assert len(cleaned) == 1
     cleaned_stat = cleaned[0].stat()
     assert True
@@ -219,7 +220,7 @@ def test_clean_nb_file_timestamp(tmp_path: Path):
     # dont preserve timestamp
     test_nb_path = write_nb(read_nb(path / nb_name), tmp_path / nb_name)
     os.utime(test_nb_path, (nb_stat.st_atime, nb_stat.st_mtime))
-    cleaned = clean_nb_file(test_nb_path, preserve_timestamp=False)
+    cleaned, errors = clean_nb_file(test_nb_path, preserve_timestamp=False)
     assert len(cleaned) == 1
     cleaned_stat = cleaned[0].stat()
     assert True

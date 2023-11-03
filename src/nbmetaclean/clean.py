@@ -126,7 +126,7 @@ def clean_nb_file(
     clear_outputs: bool = False,
     preserve_timestamp: bool = True,
     silent: bool = False,
-) -> list[Path]:
+) -> tuple[list[Path], list[tuple[Path, Exception]]]:
     """Clean metadata and execution count from notebook.
 
     Args:
@@ -139,28 +139,37 @@ def clean_nb_file(
         silent (bool): Silent mode. Defaults to False.
 
     Returns:
-        List[Path]: List of cleaned notebooks
+        tuple[List[Path], List[TuplePath]]: List of cleaned notebooks, list of notebooks with errors.
     """
     if not isinstance(path, list):
         path = [path]
     cleaned: list[Path] = []
+    errors: list[tuple[Path, Exception]] = []
     to_clean = len(path)
     for num, filename in enumerate(path):
-        nb = read_nb(filename)
-        nb, result = clean_nb(
-            nb,
-            clear_execution_count=clear_execution_count,
-            clear_outputs=clear_outputs,
-            clear_nb_metadata=clear_nb_metadata,
-            clear_cell_metadata=clear_cell_metadata,
-        )
-        if result:
-            cleaned.append(filename)
-            if preserve_timestamp:
-                stat = filename.stat()
-            write_nb(nb, filename)
-            if preserve_timestamp:
-                os.utime(filename, (stat.st_atime, stat.st_mtime))
-            if not silent:
-                print(f"done {num + 1} of {to_clean}: {filename}")
-    return cleaned
+        try:
+            nb = read_nb(filename)
+        except Exception as ex:
+            errors.append((filename, ex))
+            continue
+        try:
+            nb, result = clean_nb(
+                nb,
+                clear_execution_count=clear_execution_count,
+                clear_outputs=clear_outputs,
+                clear_nb_metadata=clear_nb_metadata,
+                clear_cell_metadata=clear_cell_metadata,
+            )
+            if result:
+                cleaned.append(filename)
+                if preserve_timestamp:
+                    stat = filename.stat()
+                write_nb(nb, filename)
+                if preserve_timestamp:
+                    os.utime(filename, (stat.st_atime, stat.st_mtime))
+                if not silent:
+                    print(f"done {num + 1} of {to_clean}: {filename}")
+        except Exception as ex:
+            errors.append((filename, ex))
+            continue
+    return cleaned, errors
