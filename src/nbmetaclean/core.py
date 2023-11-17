@@ -51,14 +51,14 @@ def write_nb(
 def get_nb_names(
     path: Optional[PathOrStr] = None,
     recursive: bool = True,
-    filter_hidden: bool = True,
+    hidden: bool = False,
 ) -> list[Path]:
     """Return list of notebooks from `path`. If no `path` return notebooks from current folder.
 
     Args:
         path (Union[Path, str, None]): Path for nb or folder with notebooks.
         recursive bool: Recursive search.
-        filter_hidden bool: Filter hidden paths.
+        hidden bool: Skip or not hidden paths, defaults to False.
 
     Raises:
         sys.exit: If filename or dir not exists or not nb file.
@@ -75,14 +75,16 @@ def get_nb_names(
         result = []
         for item in nb_path.iterdir():
             if item.is_file() and item.suffix == ".ipynb":
-                if filter_hidden and item.name.startswith("."):
+                if not hidden and item.name.startswith("."):
                     continue
                 result.append(item)
             if item.is_dir():
                 if recursive:
-                    if filter_hidden and item.name.startswith("."):
+                    if not hidden and item.name.startswith("."):
                         continue
-                    result.extend(get_nb_names(item, recursive, filter_hidden))
+                    if "checkpoint" in item.name:
+                        continue
+                    result.extend(get_nb_names(item, recursive, hidden))
 
         return result
 
