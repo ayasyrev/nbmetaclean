@@ -4,13 +4,16 @@ from dataclasses import dataclass
 import os
 
 from pathlib import Path
-from typing import Optional, Union
+from typing import Iterable, Optional, Union
 
 from nbmetaclean.core import read_nb, write_nb
 
 from .typing import NbNode, Metadata
 
-NB_METADATA_PRESERVE_MASKS = (("language_info", "name"),)
+NB_METADATA_PRESERVE_MASKS = (
+    ("language_info", "name"),
+    ("authors",),
+)
 
 
 @dataclass
@@ -28,6 +31,8 @@ class CleanConfig:
             Preserve mask for notebook metadata. Defaults to None.
         cell_metadata_preserve_mask (Optional[tuple[str, ...]], optional):
             Preserve mask for cell metadata. Defaults to None.
+        mask_merge (bool, optional): Merge masks. Add new mask to default.
+            If False - use new mask. Defaults to True.
     """
 
     clear_nb_metadata: bool = True
@@ -36,13 +41,14 @@ class CleanConfig:
     clear_outputs: bool = False
     preserve_timestamp: bool = True
     silent: bool = False
-    nb_metadata_preserve_mask: Optional[tuple[str, ...]] = None
-    cell_metadata_preserve_mask: Optional[tuple[str, ...]] = None
+    nb_metadata_preserve_mask: Optional[Iterable[tuple[str, ...]]] = None
+    cell_metadata_preserve_mask: Optional[Iterable[tuple[str, ...]]] = None
+    mask_merge: bool = True
 
 
 def filter_meta_mask(
     nb_meta: Union[str, int, Metadata],
-    mask: [tuple[str, ...]] = None,
+    mask: Optional[Iterable[tuple[str, ...]]] = None,
 ) -> Union[str, int, Metadata]:
     """Filter metadata by mask. If no mask return empty dict."""
     if isinstance(nb_meta, (str, int)) or mask == ():
@@ -136,9 +142,13 @@ def clean_nb(
     changed = False
     if cfg.clear_nb_metadata and (metadata := nb.get("metadata")):
         old_metadata = copy.deepcopy(metadata)
-        masks = (
-            cfg.nb_metadata_preserve_mask or NB_METADATA_PRESERVE_MASKS
-        )  # todo: merge or replace?
+        masks = NB_METADATA_PRESERVE_MASKS
+        if cfg.nb_metadata_preserve_mask:
+            if not cfg.mask_merge:
+                masks = cfg.nb_metadata_preserve_mask
+            else:
+                masks = cfg.nb_metadata_preserve_mask + masks
+
         nb["metadata"] = filter_metadata(metadata, masks=masks)
         if nb["metadata"] != old_metadata:
             changed = True
