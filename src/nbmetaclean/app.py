@@ -1,7 +1,7 @@
 import argparse
 from pathlib import Path
 
-from .clean import clean_nb_file
+from .clean import CleanConfig, clean_nb_file
 from .core import get_nb_names
 
 parser = argparse.ArgumentParser(
@@ -41,13 +41,19 @@ def app() -> None:
             print(f"{path} not exists!")
     if not cfg.silent:
         print(f"notebooks to check: {len(nb_files)} ")
-    cleaned = clean_nb_file(
+    cleaned, errors = clean_nb_file(
         nb_files,
-        silent=cfg.silent,
-        preserve_timestamp=not cfg.not_pt,
+        CleanConfig(
+            silent=cfg.silent,
+            preserve_timestamp=not cfg.not_pt,
+        ),
     )
     if not cfg.silent:
         print(f"cleaned nbs: {len(cleaned)}")
+        if errors:
+            print(f"with errors: {len(errors)}")
+            for nb, exc in errors:
+                print(f"{nb}: {exc}")
 
 
 if __name__ == "__main__":
