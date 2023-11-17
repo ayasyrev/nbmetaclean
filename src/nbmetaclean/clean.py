@@ -10,7 +10,10 @@ from nbmetaclean.core import read_nb, write_nb
 
 from .typing import NbNode, Metadata
 
-NB_METADATA_PRESERVE_MASKS = (("language_info", "name"),)
+NB_METADATA_PRESERVE_MASKS = (
+    ("language_info", "name"),
+    ("authors",),
+)
 
 
 @dataclass
