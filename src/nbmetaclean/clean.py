@@ -1,22 +1,54 @@
 from __future__ import annotations
 import copy
+from dataclasses import dataclass
 import os
 
 from pathlib import Path
-from typing import Optional, Union
+from typing import Iterable, Optional, Union
 
 from nbmetaclean.core import read_nb, write_nb
 
 from .typing import NbNode, Metadata
 
-NB_METADATA_PRESERVE_MASKS = [
+NB_METADATA_PRESERVE_MASKS = (
     ("language_info", "name"),
-]
+    ("authors",),
+)
+
+
+@dataclass
+class CleanConfig:
+    """Clean config.
+
+    Args:
+        clear_nb_metadata (bool, optional): Clear notebook metadata. Defaults to True.
+        clear_cell_metadata (bool, optional): Clear cell metadata. Defaults to False.
+        clear_execution_count (bool, optional): Clear cell execution count. Defaults to True.
+        clear_outputs (bool, optional): Clear cell outputs. Defaults to False.
+        preserve_timestamp (bool, optional): Preserve timestamp. Defaults to True.
+        silent (bool, optional): Silent mode. Defaults to False.
+        nb_metadata_preserve_mask (Optional[tuple[str, ...]], optional):
+            Preserve mask for notebook metadata. Defaults to None.
+        cell_metadata_preserve_mask (Optional[tuple[str, ...]], optional):
+            Preserve mask for cell metadata. Defaults to None.
+        mask_merge (bool, optional): Merge masks. Add new mask to default.
+            If False - use new mask. Defaults to True.
+    """
+
+    clear_nb_metadata: bool = True
+    clear_cell_metadata: bool = False
+    clear_execution_count: bool = True
+    clear_outputs: bool = False
+    preserve_timestamp: bool = True
+    silent: bool = False
+    nb_metadata_preserve_mask: Optional[Iterable[tuple[str, ...]]] = None
+    cell_metadata_preserve_mask: Optional[Iterable[tuple[str, ...]]] = None
+    mask_merge: bool = True
 
 
 def filter_meta_mask(
     nb_meta: Union[str, int, Metadata],
-    mask: [tuple[str, ...]] = None,
+    mask: Optional[Iterable[tuple[str, ...]]] = None,
 ) -> Union[str, int, Metadata]:
     """Filter metadata by mask. If no mask return empty dict."""
     if isinstance(nb_meta, (str, int)) or mask == ():
@@ -44,49 +76,59 @@ def filter_metadata(
     return filtered_meta
 
 
-def clean_cell_metadata(
+def clean_cell(
     cell: NbNode,
-    clear_execution_count: bool = True,
-    clear_outputs: bool = False,
-    preserve_cell_metadata_mask: Optional[list[tuple[str, ...]]] = None,
+    cfg: CleanConfig,
 ) -> bool:
-    """Clean cell metadata."""
+    """Clean cell: optionally metadata, execution_count and outputs."""
     changed = False
-    if metadata := cell.get("metadata", None):
-        old_metadata = copy.deepcopy(metadata)
-        cell["metadata"] = filter_metadata(metadata, preserve_cell_metadata_mask)
-        if cell["metadata"] != old_metadata:
-            changed = True
-    if clear_outputs and cell.get("outputs"):
-        cell["outputs"] = []
-        changed = True
-    if clear_execution_count and cell.get("execution_count"):
+
+    if cfg.clear_cell_metadata:
+        if metadata := cell.get("metadata", None):
+            old_metadata = copy.deepcopy(metadata)
+            cell["metadata"] = filter_metadata(
+                metadata, cfg.cell_metadata_preserve_mask
+            )
+            if cell["metadata"] != old_metadata:
+                changed = True
+
+    if cfg.clear_execution_count and cell.get("execution_count"):
         cell["execution_count"] = None
         changed = True
-    if outputs := cell.get("outputs"):
-        for output in outputs:
-            if clear_execution_count and output.get("execution_count", None):
-                output["execution_count"] = None
+
+    if cell.get("outputs"):
+        if cfg.clear_outputs:
+            cell["outputs"] = []
+            changed = True
+        elif cfg.clear_cell_metadata or cfg.clear_execution_count:
+            result = clean_outputs(cell["outputs"], cfg)
+            if result:
                 changed = True
-            if metadata := output.get("metadata", None):
-                old_metadata = copy.deepcopy(metadata)
-                output["metadata"] = filter_metadata(
-                    metadata, preserve_cell_metadata_mask
-                )
-                if output["metadata"] != old_metadata:
-                    changed = True
+
+    return changed
+
+
+def clean_outputs(outputs: list[NbNode], cfg: CleanConfig) -> bool:
+    """Clean outputs."""
+    changed = False
+    for output in outputs:
+        if cfg.clear_execution_count and output.get("execution_count", None):
+            output["execution_count"] = None
+            changed = True
+        if cfg.clear_cell_metadata and (metadata := output.get("metadata", None)):
+            old_metadata = copy.deepcopy(metadata)
+            output["metadata"] = filter_metadata(
+                metadata, cfg.cell_metadata_preserve_mask
+            )
+            if output["metadata"] != old_metadata:
+                changed = True
     return changed
 
 
 def clean_nb(
     nb: NbNode,
-    clear_nb_metadata: bool = True,
-    clear_cell_metadata: bool = True,
-    clear_execution_count: bool = True,
-    clear_outputs: bool = False,
-    preserve_nb_metadata_masks: Optional[list[tuple[str, ...]],] = None,
-    preserve_cell_metadata_mask: Optional[tuple[str, ...]] = None,
-) -> tuple[NbNode, bool]:
+    cfg: CleanConfig,
+) -> bool:
     """Clean notebook - metadata, execution_count, outputs.
 
     Args:
@@ -98,41 +140,40 @@ def clean_nb(
         bool: True if changed.
     """
     changed = False
-    if clear_nb_metadata and (metadata := nb.get("metadata")):
+    if cfg.clear_nb_metadata and (metadata := nb.get("metadata")):
         old_metadata = copy.deepcopy(metadata)
-        masks = preserve_nb_metadata_masks or NB_METADATA_PRESERVE_MASKS
+        masks = NB_METADATA_PRESERVE_MASKS
+        if cfg.nb_metadata_preserve_mask:
+            if not cfg.mask_merge:
+                masks = cfg.nb_metadata_preserve_mask
+            else:
+                masks = cfg.nb_metadata_preserve_mask + masks
+
         nb["metadata"] = filter_metadata(metadata, masks=masks)
         if nb["metadata"] != old_metadata:
             changed = True
-    if clear_cell_metadata:
+    if cfg.clear_cell_metadata or cfg.clear_execution_count or cfg.clear_outputs:
         for cell in nb["cells"]:
-            result = clean_cell_metadata(
+            result = clean_cell(
                 cell,
-                clear_execution_count=clear_execution_count,
-                clear_outputs=clear_outputs,
-                preserve_cell_metadata_mask=preserve_cell_metadata_mask,
+                cfg,
             )
             if result:
                 changed = True
 
-    return nb, changed
+    return changed
 
 
 def clean_nb_file(
     path: Union[Path, list[Path]],
-    clear_nb_metadata: bool = True,
-    clear_cell_metadata: bool = True,
-    clear_execution_count: bool = True,
-    clear_outputs: bool = False,
-    preserve_timestamp: bool = True,
-    silent: bool = False,
+    cfg: Optional[CleanConfig] = None,
 ) -> tuple[list[Path], list[tuple[Path, Exception]]]:
     """Clean metadata and execution count from notebook.
 
     Args:
         path (Union[str, PosixPath]): Notebook filename or list of names.
         clear_nb_metadata (bool): Clear notebook metadata. Defaults to True.
-        clear_cell_metadata (bool): Clear cell metadata. Defaults to True.
+        clear_cell_metadata (bool): Clear cell metadata. Defaults to False.
         clear_outputs (bool): Clear outputs. Defaults to False.
         preserve_timestamp (bool): Preserve timestamp. Defaults to True.
         clear_execution_count (bool, optional): Clean execution count. Defaults to True.
@@ -141,6 +182,8 @@ def clean_nb_file(
     Returns:
         tuple[List[Path], List[TuplePath]]: List of cleaned notebooks, list of notebooks with errors.
     """
+    if cfg is None:
+        cfg = CleanConfig()
     if not isinstance(path, list):
         path = [path]
     cleaned: list[Path] = []
@@ -152,20 +195,17 @@ def clean_nb_file(
         except Exception as ex:
             errors.append((filename, ex))
             continue
-        nb, result = clean_nb(
+        result = clean_nb(
             nb,
-            clear_execution_count=clear_execution_count,
-            clear_outputs=clear_outputs,
-            clear_nb_metadata=clear_nb_metadata,
-            clear_cell_metadata=clear_cell_metadata,
+            cfg,
         )
         if result:
             cleaned.append(filename)
-            if preserve_timestamp:
+            if cfg.preserve_timestamp:
                 stat = filename.stat()
             write_nb(nb, filename)
-            if preserve_timestamp:
+            if cfg.preserve_timestamp:
                 os.utime(filename, (stat.st_atime, stat.st_mtime))
-            if not silent:
+            if not cfg.silent:
                 print(f"done {num + 1} of {to_clean}: {filename}")
     return cleaned, errors

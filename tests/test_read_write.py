@@ -8,7 +8,8 @@ def test_read_nb():
     file = Path("tests/test_nbs/test_nb_1.ipynb")
     nb = read_nb(file)
     assert isinstance(nb, dict)
-    assert nb["metadata"] == {"language_info": {"name": "python"}}
+    assert nb["metadata"]["language_info"] == {"name": "python"}
+    assert nb["metadata"]["authors"][0]["name"] == "Andrei Yasyrev"
     assert nb["nbformat"] == 4
     assert nb["nbformat_minor"] == 2
     cells = nb["cells"]
@@ -45,16 +46,19 @@ def test_write_nb(tmp_path: Path):
 def test_get_nb_names():
     """test get_nb_names"""
     path = Path("tests/test_nbs")
+    # filename as argument
     file = path / "test_nb_1.ipynb"
     names = get_nb_names(file)
     assert len(names) == 1
     names.sort(key=lambda x: x.name)
     assert names[0] == file
+    # path as argument
     names = get_nb_names(path)
     assert len(names) == 2
     names.sort(key=lambda x: x.name)
     assert names[0] == file
-    names = get_nb_names(path, filter_hidden=False)
+    # path as argument. add hidden files
+    names = get_nb_names(path, hidden=True)
     assert len(names) == 3
     try:
         get_nb_names("wrong_name")
@@ -78,7 +82,7 @@ def test_get_nb_names_recursive_hidden(tmp_path: Path):
         pass
     files = get_nb_names(tmp_path)
     assert len(files) == 1
-    files = get_nb_names(tmp_path, filter_hidden=False)
+    files = get_nb_names(tmp_path, hidden=True)
     assert len(files) == 2
     # add simple file
     with open((tmp_path / "simple"), "w", encoding="utf-8") as _:
@@ -95,7 +99,7 @@ def test_get_nb_names_recursive_hidden(tmp_path: Path):
         pass
     files = get_nb_names(tmp_path)
     assert len(files) == 2
-    files = get_nb_names(tmp_path, filter_hidden=False)
+    files = get_nb_names(tmp_path, hidden=True)
     assert len(files) == 4
 
     files = get_nb_names(tmp_path, recursive=False)
@@ -108,7 +112,7 @@ def test_get_nb_names_recursive_hidden(tmp_path: Path):
         pass
     with open((hid_dir / ".tst").with_suffix(suffix), "w", encoding="utf-8") as _:
         pass
-    files = get_nb_names(tmp_path, filter_hidden=False)
+    files = get_nb_names(tmp_path, hidden=True)
     assert len(files) == 6
     files = get_nb_names(tmp_path)
     assert len(files) == 2
