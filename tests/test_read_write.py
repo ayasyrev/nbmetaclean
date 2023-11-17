@@ -8,7 +8,8 @@ def test_read_nb():
     file = Path("tests/test_nbs/test_nb_1.ipynb")
     nb = read_nb(file)
     assert isinstance(nb, dict)
-    assert nb["metadata"] == {"language_info": {"name": "python"}}
+    assert nb["metadata"]["language_info"] == {"name": "python"}
+    assert nb["metadata"]["authors"][0]["name"] == "Andrei Yasyrev"
     assert nb["nbformat"] == 4
     assert nb["nbformat_minor"] == 2
     cells = nb["cells"]

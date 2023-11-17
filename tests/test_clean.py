@@ -51,6 +51,32 @@ def test_new_metadata():
     assert new_meta == {"language_info": {"name": "python"}}
 
 
+def test_clean_nb_metadata():
+    """test clean_nb_metadata"""
+    test_nb = read_nb("tests/test_nbs/test_nb_2_clean.ipynb")
+    cfg = CleanConfig()
+    result = clean_nb(test_nb, cfg)
+    assert not result
+
+    # add metadata, new filter, mask not merged
+    test_nb["metadata"]["some key"] = "some value"
+    cfg.nb_metadata_preserve_mask = (("some key",),)
+    cfg.mask_merge = False
+    result = clean_nb(test_nb, cfg)
+    assert result
+    assert test_nb["metadata"] == {"some key": "some value"}
+
+    # add metadata, new filter, mask merged
+    test_nb = read_nb("tests/test_nbs/test_nb_2_clean.ipynb")
+    test_nb["metadata"]["some_key"] = {"key_1": 1, "key_2": 2}
+    cfg.nb_metadata_preserve_mask = (("some_key", "key_1"),)
+    cfg.mask_merge = True
+    result = clean_nb(test_nb, cfg)
+    assert result
+    assert test_nb["metadata"]["authors"][0]["name"] == "Andrei Yasyrev"
+    assert test_nb["metadata"]["some_key"] == {"key_1": 1}
+
+
 def test_clean_cell_metadata():
     """test clean_cell_metadata"""
     test_nb = read_nb("tests/test_nbs/.test_nb_2_meta.ipynb")
