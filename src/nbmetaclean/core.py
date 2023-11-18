@@ -4,10 +4,10 @@ import json
 from pathlib import Path
 from typing import Optional
 
-from .typing import NbNode, PathOrStr
+from .typing import Nb, PathOrStr
 
 
-def read_nb(path: PathOrStr) -> NbNode:
+def read_nb(path: PathOrStr) -> Nb:
     """Read notebook from filename.
 
     Args:
@@ -20,7 +20,7 @@ def read_nb(path: PathOrStr) -> NbNode:
 
 
 def write_nb(
-    nb: NbNode,
+    nb: Nb,
     path: PathOrStr,
 ) -> Path:
     """Write notebook to file
