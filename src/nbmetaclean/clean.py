@@ -6,7 +6,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Optional, Tuple, Union
 
-from nbmetaclean.core import read_nb, write_nb
+from nbmetaclean.helpers import read_nb, write_nb
 
 from .typing import Cell, CodeCell, Metadata, Nb, Output
 

@@ -13,7 +13,7 @@ from nbmetaclean.clean import (
     filter_meta_mask,
     filter_metadata,
 )
-from nbmetaclean.core import read_nb, write_nb
+from nbmetaclean.helpers import read_nb, write_nb
 
 
 def test_get_meta_by_mask():

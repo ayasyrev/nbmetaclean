@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from nbmetaclean.core import get_nb_names, read_nb, write_nb
+from nbmetaclean.helpers import get_nb_names, read_nb, write_nb
 
 
 def test_read_nb():

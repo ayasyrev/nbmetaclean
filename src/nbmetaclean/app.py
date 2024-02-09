@@ -3,7 +3,7 @@ from pathlib import Path
 from typing import Union
 
 from .clean import CleanConfig, clean_nb_file, TupleStr
-from .core import get_nb_names
+from .helpers import get_nb_names
 
 parser = argparse.ArgumentParser(
     prog="nbclean",
