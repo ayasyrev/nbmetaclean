@@ -2,7 +2,7 @@ import argparse
 from pathlib import Path
 from typing import Union
 
-from .clean import CleanConfig, clean_nb_file
+from .clean import CleanConfig, clean_nb_file, TupleStr
 from .core import get_nb_names
 
 parser = argparse.ArgumentParser(
@@ -58,7 +58,7 @@ parser.add_argument(
 )
 
 
-def process_mask(mask: Union[list[str], None]) -> Union[tuple[tuple[str, ...]], None]:
+def process_mask(mask: Union[list[str], None]) -> Union[tuple[TupleStr, ...], None]:
     if mask is None:
         return None
     return tuple(tuple(item.split(".")) for item in mask)

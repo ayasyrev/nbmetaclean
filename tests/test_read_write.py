@@ -116,3 +116,20 @@ def test_get_nb_names_recursive_hidden(tmp_path: Path):
     assert len(files) == 6
     files = get_nb_names(tmp_path)
     assert len(files) == 2
+
+    # add checkpoint dir and file
+    # files at this dir will be skipped
+    checkpoint_dir = tmp_path / ".ipynb_checkpoints"
+    checkpoint_dir.mkdir()
+    with open(
+        (checkpoint_dir / "nb-checkpoint").with_suffix(suffix), "w", encoding="utf-8"
+    ) as _:
+        pass
+    with open(
+        (checkpoint_dir / "some_nb").with_suffix(suffix), "w", encoding="utf-8"
+    ) as _:
+        pass
+    files = get_nb_names(tmp_path)
+    assert len(files) == 2
+    files = get_nb_names(tmp_path, hidden=True)
+    assert len(files) == 6

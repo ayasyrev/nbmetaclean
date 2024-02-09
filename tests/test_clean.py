@@ -83,6 +83,7 @@ def test_clean_cell_metadata():
 
     # clear outputs
     cell = copy.deepcopy(test_nb.get("cells")[1])
+    assert cell["cell_type"] == "code"
     assert cell.get("outputs")
     assert not cell.get("metadata")
     assert cell.get("execution_count") == 1
@@ -98,6 +99,15 @@ def test_clean_cell_metadata():
     assert not cell.get("outputs")
     assert not cell.get("metadata")
     assert not cell.get("execution_count")
+    # run again - no changes
+    changed = clean_cell(
+        cell,
+        cfg=CleanConfig(
+            clear_outputs=True,
+            clear_cell_metadata=True,
+        ),
+    )
+    assert not changed
 
     # dont clear outputs, execution_count, mask
     cell = copy.deepcopy(test_nb.get("cells")[1])

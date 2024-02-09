@@ -4,11 +4,14 @@ import copy
 import os
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Optional, Union
+from typing import Optional, Tuple, Union
 
 from nbmetaclean.core import read_nb, write_nb
 
 from .typing import Cell, CodeCell, Metadata, Nb, Output
+
+
+TupleStr = Tuple[str, ...]
 
 NB_METADATA_PRESERVE_MASKS = (
     ("language_info", "name"),
@@ -41,8 +44,8 @@ class CleanConfig:
     clear_outputs: bool = False
     preserve_timestamp: bool = True
     silent: bool = False
-    nb_metadata_preserve_mask: Optional[tuple[tuple[str, ...]]] = None
-    cell_metadata_preserve_mask: Optional[tuple[tuple[str, ...]]] = None
+    nb_metadata_preserve_mask: Optional[tuple[TupleStr, ...]] = None
+    cell_metadata_preserve_mask: Optional[tuple[TupleStr, ...]] = None
     mask_merge: bool = True
 
 
@@ -65,7 +68,7 @@ def filter_meta_mask(
 
 def filter_metadata(
     nb_meta: Metadata,
-    masks: Optional[tuple[tuple[str, ...]]] = None,
+    masks: Optional[tuple[TupleStr, ...]] = None,
 ) -> Metadata:
     """Clean notebooknode metadata."""
     if masks is None:
