@@ -29,7 +29,7 @@ def write_nb(
         nb (Notebook): Notebook to write
         path (Union[str, PosixPath]): filename to write
     Returns:
-        Path: Filename of writed Nb.
+        Path: Filename of written notebook.
     """
     filename = Path(path)
     if filename.suffix != ".ipynb":

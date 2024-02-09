@@ -1,5 +1,5 @@
 from pathlib import Path, PosixPath
-from typing import Dict, List, Literal, Optional, TypeVar, TypedDict, Union
+from typing import Dict, List, Literal, Optional, TypedDict, TypeVar, Union
 
 PathOrStr = TypeVar("PathOrStr", Path, PosixPath, str)
 

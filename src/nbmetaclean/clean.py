@@ -1,14 +1,14 @@
 from __future__ import annotations
-import copy
-from dataclasses import dataclass
-import os
 
+import copy
+import os
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Optional, Union
 
 from nbmetaclean.core import read_nb, write_nb
 
-from .typing import Metadata, Cell, CodeCell, Output, Nb
+from .typing import Cell, CodeCell, Metadata, Nb, Output
 
 NB_METADATA_PRESERVE_MASKS = (
     ("language_info", "name"),

@@ -85,14 +85,9 @@ def app() -> None:
         clear_outputs=cfg.clear_outputs,
         preserve_timestamp=not cfg.not_pt,
         silent=cfg.silent,
-        nb_metadata_preserve_mask=process_mask(
-            cfg.nb_metadata_preserve_mask
-        ),
-        cell_metadata_preserve_mask=process_mask(
-            cfg.cell_metadata_preserve_mask
-        ),
+        nb_metadata_preserve_mask=process_mask(cfg.nb_metadata_preserve_mask),
+        cell_metadata_preserve_mask=process_mask(cfg.cell_metadata_preserve_mask),
         mask_merge=not cfg.dont_merge_masks,
-
     )
     cleaned, errors = clean_nb_file(
         nb_files,

@@ -2,3 +2,5 @@ coverage[toml]
 nox
 black
 flake8
+mypy
+isort
