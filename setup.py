@@ -1,8 +1,7 @@
 from setuptools import setup
 
-
-REQUIREMENTS_FILENAME = 'requirements.txt'
-REQUIREMENTS_TEST_FILENAME = 'requirements_test.txt'
+REQUIREMENTS_FILENAME = "requirements.txt"
+REQUIREMENTS_TEST_FILENAME = "requirements_test.txt"
 
 
 # Requirements
