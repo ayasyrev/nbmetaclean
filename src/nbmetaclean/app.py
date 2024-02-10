@@ -2,7 +2,7 @@ import argparse
 from pathlib import Path
 from typing import Union
 
-from .clean import CleanConfig, clean_nb_file, TupleStr
+from .clean import CleanConfig, TupleStr, clean_nb_file
 from .helpers import get_nb_names
 
 parser = argparse.ArgumentParser(
