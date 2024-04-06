@@ -5,3 +5,47 @@ repos:
   -   id: nbclean
       name: nbclean
       entry: nbclean
+
+- repo: https://github.com/pre-commit/pre-commit-hooks
+  rev: v4.5.0
+  hooks:
+    - id: check-added-large-files
+    - id: check-ast
+    - id: check-builtin-literals
+    - id: check-case-conflict
+    - id: check-docstring-first
+    - id: check-executables-have-shebangs
+    - id: check-shebang-scripts-are-executable
+    - id: check-symlinks
+    - id: check-toml
+    - id: check-xml
+    - id: detect-private-key
+    - id: forbid-new-submodules
+    - id: forbid-submodules
+    - id: mixed-line-ending
+    - id: destroyed-symlinks
+    - id: fix-byte-order-marker
+    - id: check-json
+    - id: check-yaml
+      args: [ --unsafe ]
+    - id: debug-statements
+    - id: end-of-file-fixer
+    - id: trailing-whitespace
+    - id: requirements-txt-fixer
+- repo: https://github.com/astral-sh/ruff-pre-commit
+  # Ruff version.
+  rev: v0.3.3
+  hooks:
+    # Run the linter.
+    - id: ruff
+      args: [ --fix ]
+    # Run the formatter.
+    - id: ruff-format
+- repo: https://github.com/pre-commit/pygrep-hooks
+  rev: v1.10.0
+  hooks:
+    - id: python-check-mock-methods
+    - id: python-use-type-annotations
+    - id: python-check-blanket-noqa
+    - id: python-use-type-annotations
+    - id: text-unicode-replacement-char

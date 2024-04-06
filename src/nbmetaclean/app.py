@@ -56,6 +56,11 @@ parser.add_argument(
     action="store_true",
     help="Do not merge masks.",
 )
+parser.add_argument(
+    "--clean_hidden_nbs",
+    action="store_true",
+    help="Clean hidden notebooks.",
+)
 
 
 def process_mask(mask: Union[list[str], None]) -> Union[tuple[TupleStr, ...], None]:
@@ -73,7 +78,7 @@ def app() -> None:
         print(f"Path: {', '.join(cfg.path)}, preserve timestamp: {not cfg.not_pt}")
     for path in path_list:
         try:
-            nb_files.extend(get_nb_names(path))
+            nb_files.extend(get_nb_names(path, hidden=cfg.clean_hidden_nbs))
         except FileNotFoundError:
             print(f"{path} not exists!")
     if not cfg.silent:
