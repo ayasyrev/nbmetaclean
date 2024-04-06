@@ -87,5 +87,7 @@ def get_nb_names(
                     result.extend(get_nb_names(item, recursive, hidden))
 
         return result
-
+    if nb_path.name.startswith("."):
+        if not hidden:
+            return []
     return [nb_path]
