@@ -2,8 +2,8 @@ import argparse
 from pathlib import Path
 from typing import Union
 
-from .clean import CleanConfig, clean_nb_file
-from .core import get_nb_names
+from .clean import CleanConfig, TupleStr, clean_nb_file
+from .helpers import get_nb_names
 
 parser = argparse.ArgumentParser(
     prog="nbclean",
@@ -58,7 +58,7 @@ parser.add_argument(
 )
 
 
-def process_mask(mask: Union[list[str], None]) -> Union[tuple[tuple[str, ...]], None]:
+def process_mask(mask: Union[list[str], None]) -> Union[tuple[TupleStr, ...], None]:
     if mask is None:
         return None
     return tuple(tuple(item.split(".")) for item in mask)
@@ -85,14 +85,9 @@ def app() -> None:
         clear_outputs=cfg.clear_outputs,
         preserve_timestamp=not cfg.not_pt,
         silent=cfg.silent,
-        nb_metadata_preserve_mask=process_mask(
-            cfg.nb_metadata_preserve_mask
-        ),
-        cell_metadata_preserve_mask=process_mask(
-            cfg.cell_metadata_preserve_mask
-        ),
+        nb_metadata_preserve_mask=process_mask(cfg.nb_metadata_preserve_mask),
+        cell_metadata_preserve_mask=process_mask(cfg.cell_metadata_preserve_mask),
         mask_merge=not cfg.dont_merge_masks,
-
     )
     cleaned, errors = clean_nb_file(
         nb_files,
