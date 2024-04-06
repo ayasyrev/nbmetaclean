@@ -48,6 +48,23 @@ def write_nb(
     return filename
 
 
+def is_notebook(path: Path, hidden: bool = False) -> bool:
+    """Check if `path` is a notebook and not hidden. If `hidden` is True check also hidden files.
+
+    Args:
+        path (Union[Path, str]): Path to check.
+        hidden bool: If True also check hidden files, defaults to False.
+
+    Returns:
+        bool: True if `path` is a notebook and not hidden.
+    """
+    if path.suffix == ".ipynb":
+        if path.name.startswith(".") and not hidden:
+            return False
+        return True
+    return False
+
+
 def get_nb_names(
     path: Optional[PathOrStr] = None,
     recursive: bool = True,
@@ -71,23 +88,22 @@ def get_nb_names(
     if not nb_path.exists():
         raise FileNotFoundError(f"{nb_path} not exists!")
 
+    if nb_path.is_file():
+        if is_notebook(nb_path, hidden):
+            return [nb_path]
+
     if nb_path.is_dir():
         result = []
         for item in nb_path.iterdir():
-            if item.is_file() and item.suffix == ".ipynb":
-                if not hidden and item.name.startswith("."):
-                    continue
+            if item.is_file() and is_notebook(item, hidden):
                 result.append(item)
-            if item.is_dir():
-                if recursive:
-                    if not hidden and item.name.startswith("."):
-                        continue
-                    if "checkpoint" in item.name:
-                        continue
-                    result.extend(get_nb_names(item, recursive, hidden))
+            if item.is_dir() and recursive:
+                if item.name.startswith(".") and not hidden:
+                    continue
+                if "checkpoint" in item.name:
+                    continue
+                result.extend(get_nb_names(item, recursive, hidden))
 
         return result
-    if nb_path.name.startswith("."):
-        if not hidden:
-            return []
-    return [nb_path]
+
+    return []
