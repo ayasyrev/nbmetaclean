@@ -1,6 +1,5 @@
 import nox
 
-
 locations = "src/nbmetaclean", "tests", "noxfile.py"
 
 

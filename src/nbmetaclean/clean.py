@@ -1,14 +1,16 @@
 from __future__ import annotations
+
 import copy
-from dataclasses import dataclass
 import os
-
+from dataclasses import dataclass
 from pathlib import Path
-from typing import Iterable, Optional, Union
+from typing import Optional, Tuple, Union
 
-from nbmetaclean.core import read_nb, write_nb
+from nbmetaclean.helpers import read_nb, write_nb
 
-from .typing import NbNode, Metadata
+from .typing import Cell, CodeCell, Metadata, Nb, Output
+
+TupleStr = Tuple[str, ...]
 
 NB_METADATA_PRESERVE_MASKS = (
     ("language_info", "name"),
@@ -41,14 +43,14 @@ class CleanConfig:
     clear_outputs: bool = False
     preserve_timestamp: bool = True
     silent: bool = False
-    nb_metadata_preserve_mask: Optional[Iterable[tuple[str, ...]]] = None
-    cell_metadata_preserve_mask: Optional[Iterable[tuple[str, ...]]] = None
+    nb_metadata_preserve_mask: Optional[tuple[TupleStr, ...]] = None
+    cell_metadata_preserve_mask: Optional[tuple[TupleStr, ...]] = None
     mask_merge: bool = True
 
 
 def filter_meta_mask(
     nb_meta: Union[str, int, Metadata],
-    mask: Optional[Iterable[tuple[str, ...]]] = None,
+    mask: Optional[tuple[str, ...]] = None,
 ) -> Union[str, int, Metadata]:
     """Filter metadata by mask. If no mask return empty dict."""
     if isinstance(nb_meta, (str, int)) or mask == ():
@@ -65,7 +67,7 @@ def filter_meta_mask(
 
 def filter_metadata(
     nb_meta: Metadata,
-    masks: Optional[list[tuple[str, ...]]] = None,
+    masks: Optional[tuple[TupleStr, ...]] = None,
 ) -> Metadata:
     """Clean notebooknode metadata."""
     if masks is None:
@@ -77,14 +79,15 @@ def filter_metadata(
 
 
 def clean_cell(
-    cell: NbNode,
+    cell: Cell | CodeCell,
     cfg: CleanConfig,
 ) -> bool:
     """Clean cell: optionally metadata, execution_count and outputs."""
     changed = False
 
     if cfg.clear_cell_metadata:
-        if metadata := cell.get("metadata", None):
+        if cell.get("metadata", None):
+            metadata = cell["metadata"]
             old_metadata = copy.deepcopy(metadata)
             cell["metadata"] = filter_metadata(
                 metadata, cfg.cell_metadata_preserve_mask
@@ -92,23 +95,24 @@ def clean_cell(
             if cell["metadata"] != old_metadata:
                 changed = True
 
-    if cfg.clear_execution_count and cell.get("execution_count"):
-        cell["execution_count"] = None
-        changed = True
-
-    if cell.get("outputs"):
-        if cfg.clear_outputs:
-            cell["outputs"] = []
+    if cell["cell_type"] == "code":
+        if cfg.clear_execution_count and cell.get("execution_count"):
+            cell["execution_count"] = None  # type: ignore # it's code cell
             changed = True
-        elif cfg.clear_cell_metadata or cfg.clear_execution_count:
-            result = clean_outputs(cell["outputs"], cfg)
-            if result:
+
+        if cell.get("outputs"):
+            if cfg.clear_outputs:
+                cell["outputs"] = []  # type: ignore  # it's code cell
                 changed = True
+            elif cfg.clear_cell_metadata or cfg.clear_execution_count:
+                result = clean_outputs(cell["outputs"], cfg)  # type: ignore # it's code cell
+                if result:
+                    changed = True
 
     return changed
 
 
-def clean_outputs(outputs: list[NbNode], cfg: CleanConfig) -> bool:
+def clean_outputs(outputs: list[Output], cfg: CleanConfig) -> bool:
     """Clean outputs."""
     changed = False
     for output in outputs:
@@ -126,7 +130,7 @@ def clean_outputs(outputs: list[NbNode], cfg: CleanConfig) -> bool:
 
 
 def clean_nb(
-    nb: NbNode,
+    nb: Nb,
     cfg: CleanConfig,
 ) -> bool:
     """Clean notebook - metadata, execution_count, outputs.
@@ -148,7 +152,6 @@ def clean_nb(
                 masks = cfg.nb_metadata_preserve_mask
             else:
                 masks = cfg.nb_metadata_preserve_mask + masks
-
         nb["metadata"] = filter_metadata(metadata, masks=masks)
         if nb["metadata"] != old_metadata:
             changed = True
