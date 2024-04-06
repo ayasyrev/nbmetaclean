@@ -1,6 +1,7 @@
-pre-commit
 black
 black[jupyter]
 flake8
-mypy
 isort
+mypy
+pre-commit
+ruff
