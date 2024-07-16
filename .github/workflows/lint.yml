@@ -1,0 +1,17 @@
+name: Lint
+on:
+  push:
+    branches:
+      - dev
+      - main
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@main
+    - uses: actions/setup-python@main
+      with:
+        python-version: "3.11"
+        architecture: x64
+    - run: pip install ruff
+    - run: ruff check .
