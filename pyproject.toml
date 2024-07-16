@@ -1,5 +1,5 @@
 [tool.coverage.paths]
-source = ["src", "*/site-packages"]
+source = ["src"]
 
 [tool.coverage.run]
 branch = true
