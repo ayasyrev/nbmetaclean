@@ -22,10 +22,10 @@ jobs:
     - name: Install
       run: |
         pip install uv
-        uv pip install --system .[test]
+        uv pip install --system .[test] "coverage[toml]"
 
     - name: Tests
-      run: pytest
+      run: pytest --cov
 
     - name: CodeCov
       if: ${{ matrix.python == '3.11' }}
