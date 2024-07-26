@@ -23,5 +23,13 @@ jobs:
       run: |
         pip install uv
         uv pip install --system .[test]
+
     - name: Tests
       run: pytest
+
+    - name: CodeCov
+      if: ${{ matrix.python == '3.11' }}
+      uses: codecov/codecov-action@main
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
+        slug: ayasyrev/nbmetaclean
