@@ -61,6 +61,11 @@ parser.add_argument(
     action="store_true",
     help="Clean hidden notebooks.",
 )
+parser.add_argument(
+    "--dry_run",
+    action="store_true",
+    help="perform a trial run, don't write results",
+)
 
 
 def process_mask(mask: Union[list[str], None]) -> Union[tuple[TupleStr, ...], None]:
