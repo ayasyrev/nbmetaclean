@@ -8,7 +8,7 @@ from typing import Optional, Tuple, Union
 
 from nbmetaclean.helpers import read_nb, write_nb
 
-from .typing import Cell, CodeCell, Metadata, Nb, Output
+from .types import Cell, CodeCell, Metadata, Nb, Output
 
 TupleStr = Tuple[str, ...]
 
