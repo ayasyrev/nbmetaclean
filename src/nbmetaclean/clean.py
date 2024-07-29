@@ -33,8 +33,9 @@ class CleanConfig:
             Preserve mask for notebook metadata. Defaults to None.
         cell_metadata_preserve_mask (Optional[tuple[str, ...]], optional):
             Preserve mask for cell metadata. Defaults to None.
-        mask_merge (bool, optional): Merge masks. Add new mask to default.
+        mask_merge (bool): Merge masks. Add new mask to default.
             If False - use new mask. Defaults to True.
+        dry_run (bool): perform a trial run, don't write results. Defaults to False.
     """
 
     clear_nb_metadata: bool = True
@@ -46,6 +47,7 @@ class CleanConfig:
     nb_metadata_preserve_mask: Optional[tuple[TupleStr, ...]] = None
     cell_metadata_preserve_mask: Optional[tuple[TupleStr, ...]] = None
     mask_merge: bool = True
+    dry_run: bool = False
 
 
 def filter_meta_mask(
@@ -175,12 +177,7 @@ def clean_nb_file(
 
     Args:
         path (Union[str, PosixPath]): Notebook filename or list of names.
-        clear_nb_metadata (bool): Clear notebook metadata. Defaults to True.
-        clear_cell_metadata (bool): Clear cell metadata. Defaults to False.
-        clear_outputs (bool): Clear outputs. Defaults to False.
-        preserve_timestamp (bool): Preserve timestamp. Defaults to True.
-        clear_execution_count (bool, optional): Clean execution count. Defaults to True.
-        silent (bool): Silent mode. Defaults to False.
+        cfg (CleanConfig, optional): Config for job, if None, used default settings. Default is None.
 
     Returns:
         tuple[List[Path], List[TuplePath]]: List of cleaned notebooks, list of notebooks with errors.
@@ -204,6 +201,8 @@ def clean_nb_file(
         )
         if result:
             cleaned.append(filename)
+            if cfg.dry_run:
+                continue
             if cfg.preserve_timestamp:
                 stat = filename.stat()
             write_nb(nb, filename)

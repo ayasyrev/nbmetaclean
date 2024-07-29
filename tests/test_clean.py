@@ -255,7 +255,24 @@ def test_clean_nb_file(tmp_path: Path, capsys: CaptureFixture[str]):
     nb_clean = read_nb(path / "test_nb_2_clean.ipynb")
 
     # prepare temp test notebook
-    test_nb_path = write_nb(read_nb(path / nb_name), tmp_path / nb_name)
+    nb_source = read_nb(path / nb_name)
+    test_nb_path = write_nb(nb_source, tmp_path / nb_name)
+
+    # clean meta, leave execution_count
+    # first lets dry run
+    cleaned, errors = clean_nb_file(
+        test_nb_path,
+        cfg=CleanConfig(
+            clear_execution_count=False,
+            dry_run=True,
+        ),
+    )
+    assert len(cleaned) == 1
+    assert len(errors) == 0
+    nb = read_nb(cleaned[0])
+    assert nb["metadata"] == nb_source["metadata"]
+    assert nb["cells"][1]["execution_count"] == 1
+    assert nb["cells"][1]["outputs"][0]["execution_count"] == 1
 
     # clean meta, leave execution_count
     cleaned, errors = clean_nb_file(
