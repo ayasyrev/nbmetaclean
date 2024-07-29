@@ -4,7 +4,7 @@ import json
 from pathlib import Path
 from typing import Optional
 
-from .typing import Nb, PathOrStr
+from .types import Nb, PathOrStr
 
 
 def read_nb(path: PathOrStr) -> Nb:
