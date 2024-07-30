@@ -98,6 +98,7 @@ def app() -> None:
         nb_metadata_preserve_mask=process_mask(cfg.nb_metadata_preserve_mask),
         cell_metadata_preserve_mask=process_mask(cfg.cell_metadata_preserve_mask),
         mask_merge=not cfg.dont_merge_masks,
+        dry_run=cfg.dry_run,
     )
     cleaned, errors = clean_nb_file(
         nb_files,
