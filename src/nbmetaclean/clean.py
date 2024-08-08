@@ -184,8 +184,7 @@ def clean_nb_file(
     Returns:
         tuple[List[Path], List[TuplePath]]: List of cleaned notebooks, list of notebooks with errors.
     """
-    if cfg is None:
-        cfg = CleanConfig()
+    cfg = cfg or CleanConfig()
     if not isinstance(path, list):
         path = [path]
     cleaned: list[Path] = []
