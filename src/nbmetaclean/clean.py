@@ -36,7 +36,6 @@ class CleanConfig:
         mask_merge (bool): Merge masks. Add new mask to default.
             If False - use new mask. Defaults to True.
         dry_run (bool): perform a trial run, don't write results. Defaults to False.
-        verbose (bool): Print more info - cleaned notebooks. Defaults to False.
     """
 
     clear_nb_metadata: bool = True
@@ -49,7 +48,6 @@ class CleanConfig:
     cell_metadata_preserve_mask: Optional[tuple[TupleStr, ...]] = None
     mask_merge: bool = True
     dry_run: bool = False
-    verbose: bool = False
 
 
 def filter_meta_mask(
@@ -184,14 +182,12 @@ def clean_nb_file(
     Returns:
         tuple[List[Path], List[TuplePath]]: List of cleaned notebooks, list of notebooks with errors.
     """
-    if cfg is None:
-        cfg = CleanConfig()
+    cfg = cfg or CleanConfig()
     if not isinstance(path, list):
         path = [path]
     cleaned: list[Path] = []
     errors: list[tuple[Path, Exception]] = []
-    to_clean = len(path)
-    for num, filename in enumerate(path):
+    for filename in path:
         try:
             nb = read_nb(filename)
         except Exception as ex:
@@ -210,6 +206,5 @@ def clean_nb_file(
             write_nb(nb, filename)
             if cfg.preserve_timestamp:
                 os.utime(filename, (stat.st_atime, stat.st_mtime))
-            if not cfg.silent:
-                print(f"done {num + 1} of {to_clean}: {filename}")
+
     return cleaned, errors
