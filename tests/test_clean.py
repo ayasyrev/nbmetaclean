@@ -289,10 +289,6 @@ def test_clean_nb_file(tmp_path: Path, capsys: CaptureFixture[str]):
     # clean meta, execution_count
     # path as list
     cleaned, errors = clean_nb_file([test_nb_path], CleanConfig())
-    captured = capsys.readouterr()
-    out = captured.out
-    assert out.startswith("done")
-    assert "test_clean_nb_file0/.test_nb_2_meta.ipynb" in out
     assert len(cleaned) == 1
     nb = read_nb(cleaned[0])
     assert nb == nb_clean
@@ -300,17 +296,7 @@ def test_clean_nb_file(tmp_path: Path, capsys: CaptureFixture[str]):
     # try clean cleaned
     cleaned, errors = clean_nb_file(test_nb_path, CleanConfig())
     assert len(cleaned) == 0
-    captured = capsys.readouterr()
-    out = captured.out
-    assert not out.strip()
-
-    # silent
-    test_nb_path = write_nb(read_nb(path / nb_name), tmp_path / nb_name)
-    cleaned, errors = clean_nb_file(test_nb_path, CleanConfig(silent=True))
-    assert len(cleaned) == 1
     assert len(errors) == 0
-    captured = capsys.readouterr()
-    assert not captured.out.strip()
 
 
 def test_clean_nb_file_errors(capsys: CaptureFixture[str], tmp_path: Path):

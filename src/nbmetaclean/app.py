@@ -67,12 +67,6 @@ parser.add_argument(
     action="store_true",
     help="perform a trial run, don't write results",
 )
-parser.add_argument(
-    "-V",
-    "--verbose",
-    action="store_true",
-    help="Print more info - cleaned notebooks.",
-)
 
 
 def process_mask(mask: Union[list[str], None]) -> Union[tuple[TupleStr, ...], None]:
@@ -113,9 +107,8 @@ def app() -> None:
     )
     if not cfg.silent:
         print(f"cleaned nbs: {len(cleaned)}")
-        if cfg.verbose:
-            for nb in cleaned:
-                print("- ", nb)
+        for nb in cleaned:
+            print("- ", nb)
         if errors:
             print(f"with errors: {len(errors)}")
             for nb, exc in errors:
