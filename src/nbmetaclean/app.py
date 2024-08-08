@@ -62,9 +62,16 @@ parser.add_argument(
     help="Clean hidden notebooks.",
 )
 parser.add_argument(
+    "-D",
     "--dry_run",
     action="store_true",
     help="perform a trial run, don't write results",
+)
+parser.add_argument(
+    "-V",
+    "--verbose",
+    action="store_true",
+    help="Print more info - cleaned notebooks.",
 )
 
 
@@ -106,6 +113,9 @@ def app() -> None:
     )
     if not cfg.silent:
         print(f"cleaned nbs: {len(cleaned)}")
+        if cfg.verbose:
+            for nb in cleaned:
+                print("- ", nb)
         if errors:
             print(f"with errors: {len(errors)}")
             for nb, exc in errors:

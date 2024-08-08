@@ -36,6 +36,7 @@ class CleanConfig:
         mask_merge (bool): Merge masks. Add new mask to default.
             If False - use new mask. Defaults to True.
         dry_run (bool): perform a trial run, don't write results. Defaults to False.
+        verbose (bool): Print more info - cleaned notebooks. Defaults to False.
     """
 
     clear_nb_metadata: bool = True
@@ -48,6 +49,7 @@ class CleanConfig:
     cell_metadata_preserve_mask: Optional[tuple[TupleStr, ...]] = None
     mask_merge: bool = True
     dry_run: bool = False
+    verbose: bool = False
 
 
 def filter_meta_mask(
