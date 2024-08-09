@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import os
 from pathlib import Path
 from typing import Optional
 
@@ -22,12 +23,14 @@ def read_nb(path: PathOrStr) -> Nb:
 def write_nb(
     nb: Nb,
     path: PathOrStr,
+    timestamp: Optional[tuple[float, float]] = None,
 ) -> Path:
-    """Write notebook to file
+    """Write notebook to file, optionally set timestamp.
 
     Args:
         nb (Notebook): Notebook to write
         path (Union[str, PosixPath]): filename to write
+        timestamp (Optional[tuple[float, float]]): timestamp to set, (st_atime, st_mtime) defaults to None
     Returns:
         Path: Filename of written notebook.
     """
@@ -45,6 +48,8 @@ def write_nb(
             )
             + "\n",
         )
+    if timestamp is not None:
+        os.utime(filename, timestamp)
     return filename
 
 
