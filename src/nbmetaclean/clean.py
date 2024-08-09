@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import copy
-import os
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Optional, Tuple, Union
@@ -203,8 +202,9 @@ def clean_nb_file(
                 continue
             if cfg.preserve_timestamp:
                 stat = filename.stat()
-            write_nb(nb, filename)
-            if cfg.preserve_timestamp:
-                os.utime(filename, (stat.st_atime, stat.st_mtime))
+                timestamp = (stat.st_atime, stat.st_mtime)
+            else:
+                timestamp = None
+            write_nb(nb, filename, timestamp)
 
     return cleaned, errors

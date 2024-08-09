@@ -41,3 +41,10 @@ def test_write_nb(tmp_path: Path):
     # write with name w/o suffix
     result = write_nb(nb, tmp_path / "test_nb_1")
     assert result == tmp_path / "test_nb_1.ipynb"
+
+    # write with stat
+    stat = file.stat()
+    timestamp = (stat.st_atime, stat.st_mtime)
+    result = write_nb(nb, tmp_path / "test_nb_1", timestamp=timestamp)
+    res_stat = result.stat()
+    assert timestamp == (res_stat.st_atime, res_stat.st_mtime)
