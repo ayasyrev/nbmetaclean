@@ -67,6 +67,12 @@ parser.add_argument(
     action="store_true",
     help="perform a trial run, don't write results",
 )
+parser.add_argument(
+    "-V",
+    "--verbose",
+    action="store_true",
+    help="Verbose mode. Print extra information.",
+)
 
 
 def process_mask(mask: Union[list[str], None]) -> Union[tuple[TupleStr, ...], None]:
@@ -78,17 +84,6 @@ def process_mask(mask: Union[list[str], None]) -> Union[tuple[TupleStr, ...], No
 def app() -> None:
     """Clean metadata and execution_count from Jupyter notebook."""
     cfg = parser.parse_args()
-    path_list = cfg.path if isinstance(cfg.path, list) else [cfg.path]
-    nb_files: list[Path] = []
-    if not cfg.silent:
-        print(f"Path: {', '.join(cfg.path)}, preserve timestamp: {not cfg.not_pt}")
-    for path in path_list:
-        try:
-            nb_files.extend(get_nb_names(path, hidden=cfg.clean_hidden_nbs))
-        except FileNotFoundError:
-            print(f"{path} not exists!")
-    if not cfg.silent:
-        print(f"notebooks to check: {len(nb_files)} ")
     clean_config = CleanConfig(
         clear_nb_metadata=not cfg.dont_clear_nb_metadata,
         clear_cell_metadata=cfg.clear_cell_metadata,
@@ -100,7 +95,19 @@ def app() -> None:
         cell_metadata_preserve_mask=process_mask(cfg.cell_metadata_preserve_mask),
         mask_merge=not cfg.dont_merge_masks,
         dry_run=cfg.dry_run,
+        verbose=cfg.verbose if not cfg.silent else False,
     )
+    path_list = cfg.path if isinstance(cfg.path, list) else [cfg.path]
+    nb_files: list[Path] = []
+    if clean_config.verbose:
+        print(f"Path: {', '.join(cfg.path)}, preserve timestamp: {not cfg.not_pt}")
+    for path in path_list:
+        try:
+            nb_files.extend(get_nb_names(path, hidden=cfg.clean_hidden_nbs))
+        except FileNotFoundError:
+            print(f"{path} not exists!")
+    if clean_config.verbose:
+        print(f"notebooks to check: {len(nb_files)} ")
     cleaned, errors = clean_nb_file(
         nb_files,
         clean_config,
