@@ -1,8 +1,12 @@
 repos:
-- repo: https://github.com/ayasyrev/nbmetaclean
-  rev: 0.0.8
+- repo: local
   hooks:
-  -   id: nbclean
+    # local version for testing
+    - id: nbclean
+      name: nbclean local
+      entry: nbclean
+      language: system
+      files: \.ipynb
 
 - repo: https://github.com/pre-commit/pre-commit-hooks
   rev: v4.6.0
