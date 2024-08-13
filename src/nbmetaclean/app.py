@@ -81,6 +81,31 @@ def process_mask(mask: Union[list[str], None]) -> Union[tuple[TupleStr, ...], No
     return tuple(tuple(item.split(".")) for item in mask)
 
 
+def print_result(
+    cleaned: list[Path],
+    errors: list[tuple[Path, Exception]],
+    clean_config: CleanConfig,
+    path: list[Path],
+    num_nbs: int,
+) -> None:
+    if clean_config.verbose:
+        print(
+            f"Path: {', '.join(path)}, preserve timestamp: {clean_config.preserve_timestamp}"
+        )
+        print(f"checked: {num_nbs} notebooks")
+    if cleaned:
+        if len(cleaned) == 1:
+            print(f"cleaned: {cleaned[0]}")
+        else:
+            print(f"cleaned: {len(cleaned)} notebooks")
+            for nb in cleaned:
+                print("- ", nb)
+    if errors:
+        print(f"with errors: {len(errors)}")
+        for nb, exc in errors:
+            print(f"{nb}: {exc}")
+
+
 def app() -> None:
     """Clean metadata and execution_count from Jupyter notebook."""
     cfg = parser.parse_args()
@@ -99,31 +124,20 @@ def app() -> None:
     )
     path_list = cfg.path if isinstance(cfg.path, list) else [cfg.path]
     nb_files: list[Path] = []
-    if clean_config.verbose:
-        print(f"Path: {', '.join(cfg.path)}, preserve timestamp: {not cfg.not_pt}")
     for path in path_list:
-        try:
+        path = Path(path)
+        if path.exists():
             nb_files.extend(get_nb_names(path, hidden=cfg.clean_hidden_nbs))
-        except FileNotFoundError:
+        else:
             print(f"{path} not exists!")
-    if clean_config.verbose:
-        print(f"notebooks to check: {len(nb_files)} ")
+
     cleaned, errors = clean_nb_file(
         nb_files,
         clean_config,
     )
+
     if not cfg.silent:
-        if cleaned:
-            if len(cleaned) == 1:
-                print(f"cleaned: {cleaned[0]}")
-            else:
-                print(f"cleaned: {len(cleaned)} notebooks")
-                for nb in cleaned:
-                    print("- ", nb)
-        if errors:
-            print(f"with errors: {len(errors)}")
-            for nb, exc in errors:
-                print(f"{nb}: {exc}")
+        print_result(cleaned, errors, clean_config, path_list, len(nb_files))
 
 
 if __name__ == "__main__":
