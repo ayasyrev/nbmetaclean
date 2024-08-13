@@ -113,9 +113,13 @@ def app() -> None:
         clean_config,
     )
     if not cfg.silent:
-        print(f"cleaned nbs: {len(cleaned)}")
-        for nb in cleaned:
-            print("- ", nb)
+        if cleaned:
+            if len(cleaned) == 1:
+                print(f"cleaned: {cleaned[0]}")
+            else:
+                print(f"cleaned: {len(cleaned)} notebooks")
+                for nb in cleaned:
+                    print("- ", nb)
         if errors:
             print(f"with errors: {len(errors)}")
             for nb, exc in errors:
