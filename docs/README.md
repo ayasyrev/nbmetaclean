@@ -1,3 +1,8 @@
+---
+hide:
+  - navigation
+---
+
 # nbmetaclean
 
 Pre-commit hook to clean Jupyter Notebooks metadata, execution_count and optionally output.

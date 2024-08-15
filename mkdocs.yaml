@@ -1,0 +1,29 @@
+site_name: Nbmetaclean
+repo_url: https://github.com/ayasyrev/nbmetaclean
+repo_name: nbmetaclean
+docs_dir: docs
+
+# copyright:
+theme:
+  name: material
+  custom_dir: docs/overrides
+
+  palette:
+    - scheme: default
+      toggle:
+        icon: material/toggle-switch-off-outline
+        name: Switch to dark mode
+    - scheme: slate
+      toggle:
+        icon: material/toggle-switch
+        name: Switch to light mode
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+
+extra:
+  analytics:
+    provider: google
+    property: G-0F3FK713C2
+copyright: Copyright &copy; 2023-2024 Andrei Yasyrev.
