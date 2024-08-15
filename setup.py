@@ -1,24 +1,30 @@
 from setuptools import setup
 
+
 REQUIREMENTS_FILENAME = "requirements.txt"
 REQUIREMENTS_TEST_FILENAME = "requirements_test.txt"
+REQUIREMENTS_DEV_FILENAME = "requirements_dev.txt"
 
 
-# Requirements
-try:
-    with open(REQUIREMENTS_FILENAME, encoding="utf-8") as fh:
-        REQUIRED = fh.read().split("\n")
-except FileNotFoundError:
-    REQUIRED = []
+def load_requirements(filename: str) -> list[str]:
+    """Load requirements from file"""
+    try:
+        with open(filename, encoding="utf-8") as fh:
+            return fh.read().splitlines()
+    except FileNotFoundError:
+        return []
 
-try:
-    with open(REQUIREMENTS_TEST_FILENAME, encoding="utf-8") as fh:
-        TEST_REQUIRED = fh.read().split("\n")
-except FileNotFoundError:
-    TEST_REQUIRED = []
+
+REQUIRED = load_requirements(REQUIREMENTS_FILENAME)
+TEST_REQUIRED = load_requirements(REQUIREMENTS_TEST_FILENAME)
+DEV_REQUIRED = load_requirements(REQUIREMENTS_DEV_FILENAME)
+
 
 # What packages are optional?
-EXTRAS = {"test": TEST_REQUIRED}
+EXTRAS = {
+    "test": TEST_REQUIRED,
+    "dev": DEV_REQUIRED + TEST_REQUIRED,
+}
 
 
 setup(

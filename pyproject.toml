@@ -1,5 +1,5 @@
 [tool.coverage.paths]
-source = ["src", "*/site-packages"]
+source = ["src"]
 
 [tool.coverage.run]
 branch = true
@@ -7,3 +7,16 @@ source = ["nbmetaclean"]
 
 [tool.coverage.report]
 show_missing = true
+
+[tool.ruff]
+extend-include = ["*.ipynb"]
+indent-width = 4
+
+[tool.ruff.lint]
+explicit-preview-rules = true
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = false
+line-ending = "auto"
