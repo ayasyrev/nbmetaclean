@@ -22,6 +22,11 @@ parser.add_argument(
     help="Silent mode.",
 )
 parser.add_argument(
+    "--not_ec",
+    action="store_false",
+    help="Do not clear execution_count.",
+)
+parser.add_argument(
     "--not-pt",
     action="store_true",
     help="Do not preserve timestamp.",
@@ -112,7 +117,7 @@ def app() -> None:
     clean_config = CleanConfig(
         clear_nb_metadata=not cfg.dont_clear_nb_metadata,
         clear_cell_metadata=cfg.clear_cell_metadata,
-        clear_execution_count=True,
+        clear_execution_count=cfg.not_ec,
         clear_outputs=cfg.clear_outputs,
         preserve_timestamp=not cfg.not_pt,
         silent=cfg.silent,
