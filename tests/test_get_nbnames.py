@@ -26,12 +26,12 @@ def test_get_nb_names():
 
     # path as argument
     names = get_nb_names(path)
-    assert len(names) == 2
+    assert len(names) == 3
     names.sort(key=lambda x: x.name)
     assert names[0] == file
     # path as argument. add hidden files
     names = get_nb_names(path, hidden=True)
-    assert len(names) == 3
+    assert len(names) == 4
     try:
         get_nb_names("wrong_name")
         assert False
