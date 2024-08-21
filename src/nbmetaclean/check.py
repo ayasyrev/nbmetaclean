@@ -30,3 +30,20 @@ def check_nb_ec(nb: Nb, strict: bool = True) -> bool:
                 return False
             current = cell["execution_count"]
     return True
+
+
+def check_nb_errors(nb: Nb) -> bool:
+    """Check nb for cells with errors.
+
+    Args:
+        nb (Nb): Notebook to check.
+
+    Returns:
+        bool: True if no errors.
+    """
+    for cell in nb["cells"]:
+        if cell["cell_type"] == "code" and "outputs" in cell:
+            for output in cell["outputs"]:
+                if output["output_type"] == "error":
+                    return False
+    return True
