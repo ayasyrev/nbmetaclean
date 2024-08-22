@@ -48,6 +48,13 @@ def test_check_nb_ec():
     result = check_nb_ec(test_nb, strict=False)
     assert not result
 
+    # code cell without execution_count
+    test_nb = read_nb("tests/test_nbs/test_nb_3_ec.ipynb")
+    test_nb["cells"][2]["execution_count"] = 1
+
+    result = check_nb_ec(test_nb, strict=False)
+    assert not result
+
 
 def test_check_nb_errors():
     """test check_nb_errors"""

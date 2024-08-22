@@ -30,7 +30,7 @@ def check_nb_ec(nb: Nb, strict: bool = True) -> bool:
                 continue
             if strict and cell["execution_count"] != current + 1:
                 return False
-            if cell["execution_count"] <= current:
+            if not cell["execution_count"] or cell["execution_count"] <= current:
                 return False
             current = cell["execution_count"]
     return True
