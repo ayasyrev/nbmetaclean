@@ -32,10 +32,10 @@ def test_check_nb_ec():
     assert not result
 
     # start not from 1
+    test_nb = read_nb("tests/test_nbs/test_nb_3_ec.ipynb")
     test_nb["cells"][2]["execution_count"] = 2
     test_nb["cells"][3]["execution_count"] = 3
     test_nb["cells"][5]["execution_count"] = 4
-    test_nb["cells"][6]["execution_count"] = None
 
     result = check_nb_ec(test_nb)
     assert not result
