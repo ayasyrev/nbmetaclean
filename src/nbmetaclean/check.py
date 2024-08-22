@@ -1,4 +1,8 @@
-from nbmetaclean.types import Nb
+from typing import cast
+from nbmetaclean.types import CodeCell, Nb
+
+
+__all__ = ["check_nb_ec", "check_nb_errors"]
 
 
 def check_nb_ec(nb: Nb, strict: bool = True) -> bool:
@@ -17,15 +21,15 @@ def check_nb_ec(nb: Nb, strict: bool = True) -> bool:
     current = 0
     for cell in nb["cells"]:
         if cell["cell_type"] == "code":
+            cell = cast(CodeCell, cell)
             if not cell["source"]:
                 if cell[
                     "execution_count"
                 ]:  # if cell without code but with execution_count
                     return False
                 continue
-            if strict:
-                if cell["execution_count"] != current + 1:
-                    return False
+            if strict and cell["execution_count"] != current + 1:
+                return False
             if cell["execution_count"] <= current:
                 return False
             current = cell["execution_count"]
@@ -43,6 +47,7 @@ def check_nb_errors(nb: Nb) -> bool:
     """
     for cell in nb["cells"]:
         if cell["cell_type"] == "code" and "outputs" in cell:
+            cell = cast(CodeCell, cell)
             for output in cell["outputs"]:
                 if output["output_type"] == "error":
                     return False
