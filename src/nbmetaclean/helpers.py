@@ -112,3 +112,30 @@ def get_nb_names(
         return result
 
     return []
+
+
+def get_nb_names_from_list(
+    path_list: list[PathOrStr] | PathOrStr,
+    recursive: bool = True,
+    hidden: bool = False,
+) -> list[Path]:
+    """Return list of notebooks from `path_list`.
+
+    Args:
+        path_list (Union[Path, str, None]): Path for nb or folder with notebooks.
+        recursive bool: Recursive search.
+        hidden bool: Skip or not hidden paths, defaults to False.
+
+    Returns:
+        List[Path]: List of notebooks names.
+    """
+    path_list = [path_list] if isinstance(path_list, (str, Path)) else path_list
+    nb_files: list[Path] = []
+    for path in path_list:
+        path = Path(path)
+        if path.exists():
+            nb_files.extend(get_nb_names(path, recursive, hidden))
+        else:
+            print(f"{path} not exists!")
+
+    return nb_files
