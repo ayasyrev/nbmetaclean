@@ -9,6 +9,18 @@ from nbmetaclean.helpers import read_nb, write_nb
 
 from .types import Cell, CodeCell, Metadata, Nb, Output
 
+
+__all__ = [
+    "CleanConfig",
+    "clean_cell",
+    "clean_nb",
+    "clean_nb_file",
+    "TupleStr",
+    "filter_metadata",
+    "filter_meta_mask",
+    "NB_METADATA_PRESERVE_MASKS",
+]
+
 TupleStr = Tuple[str, ...]
 
 NB_METADATA_PRESERVE_MASKS = (
