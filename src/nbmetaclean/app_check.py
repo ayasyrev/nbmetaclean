@@ -1,6 +1,6 @@
 import argparse
 
-from .check import check_nb_ec, check_nb_errors
+from .check import check_nb_ec, check_nb_errors, check_nb_warnings
 from .helpers import get_nb_names_from_list, read_nb
 
 parser = argparse.ArgumentParser(
@@ -22,6 +22,11 @@ parser.add_argument(
     "--err",
     action="store_true",
     help="Check errors in outputs.",
+)
+parser.add_argument(
+    "--warn",
+    action="store_true",
+    help="Check warnings in outputs.",
 )
 parser.add_argument(
     "--not_strict",
@@ -73,15 +78,26 @@ def app_check() -> None:
                 print("- ", nb)
 
     if cfg.err:
-        wrong_err = []
+        nb_errors = []
         for nb in nb_files:
             result = check_nb_errors(read_nb(nb))
             if not result:
-                wrong_err.append(nb)
+                nb_errors.append(nb)
 
-        if wrong_err:
-            print(f"{len(wrong_err)} notebooks with some errors in outputs:")
-            for nb in wrong_err:
+        if nb_errors:
+            print(f"{len(nb_errors)} notebooks with some errors in outputs:")
+            for nb in nb_errors:
+                print("- ", nb)
+    if cfg.warn:
+        nb_warnings = []
+        for nb in nb_files:
+            result = check_nb_warnings(read_nb(nb))
+            if not result:
+                nb_warnings.append(nb)
+
+        if nb_warnings:
+            print(f"{len(nb_warnings)} notebooks with some warnings in outputs:")
+            for nb in nb_warnings:
                 print("- ", nb)
 
 
