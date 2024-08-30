@@ -111,7 +111,7 @@ def print_result(
             print(f"{nb}: {exc}")
 
 
-def app() -> None:
+def app_clean() -> None:
     """Clean metadata and execution_count from Jupyter notebook."""
     cfg = parser.parse_args()
     clean_config = CleanConfig(
@@ -140,4 +140,4 @@ def app() -> None:
 
 
 if __name__ == "__main__":
-    app()
+    app_clean()
