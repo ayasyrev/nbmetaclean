@@ -64,3 +64,21 @@ def check_nb_errors(nb: Nb) -> bool:
                 if output["output_type"] == "error":
                     return False
     return True
+
+
+def check_nb_warnings(nb: Nb) -> bool:
+    """Check nb for cells with warnings.
+
+    Args:
+        nb (Nb): Notebook to check.
+
+    Returns:
+        bool: True if no warnings.
+    """
+    for cell in nb["cells"]:
+        if cell["cell_type"] == "code" and "outputs" in cell:
+            cell = cast(CodeCell, cell)
+            for output in cell["outputs"]:
+                if output["output_type"] == "stream" and output["name"] == "stderr":
+                    return False
+    return True

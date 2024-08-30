@@ -1,4 +1,4 @@
-from nbmetaclean.check import check_nb_ec, check_nb_errors
+from nbmetaclean.check import check_nb_ec, check_nb_errors, check_nb_warnings
 from nbmetaclean.helpers import read_nb
 
 
@@ -69,4 +69,20 @@ def test_check_nb_errors():
 
     test_nb["cells"][2]["outputs"][0]["output_type"] = "error"
     result = check_nb_errors(test_nb)
+    assert not result
+
+
+def test_check_nb_warnings():
+    """test check_nb_warnings"""
+    test_nb = read_nb("tests/test_nbs/test_nb_3_ec.ipynb")
+    result = check_nb_warnings(test_nb)
+    assert result
+
+    test_nb["cells"][2]["outputs"][0]["output_type"] = "error"
+    result = check_nb_warnings(test_nb)
+    assert result
+
+    test_nb["cells"][2]["outputs"][0]["output_type"] = "stream"
+    test_nb["cells"][2]["outputs"][0]["name"] = "stderr"
+    result = check_nb_warnings(test_nb)
     assert not result
