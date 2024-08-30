@@ -4,9 +4,14 @@ from nbmetaclean.helpers import read_nb
 
 def test_check_nb_ec():
     """test check_nb_ec"""
+    # base notebook - no execution_count
     test_nb = read_nb("tests/test_nbs/test_nb_3_ec.ipynb")
     result = check_nb_ec(test_nb)
     assert not result
+
+    # check with `no_exec` option
+    result = check_nb_ec(test_nb, strict=False, no_exec=True)
+    assert result
 
     test_nb["cells"][2]["execution_count"] = 1
     test_nb["cells"][3]["execution_count"] = 2
