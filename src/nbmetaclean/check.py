@@ -31,14 +31,15 @@ def check_nb_ec(nb: Nb, strict: bool = True, no_exec: bool = False) -> bool:
                 ]:  # if cell without code but with execution_count
                     return False
                 continue
-            if strict and cell["execution_count"] != current + 1:
-                return False
+
             if not cell["execution_count"]:
                 if not no_exec:
                     return False
                 else:
                     no_exec_cells += 1
             else:
+                if cell["execution_count"] != current + 1 and strict:
+                    return False
                 if cell["execution_count"] <= current:
                     return False
                 current = cell["execution_count"]

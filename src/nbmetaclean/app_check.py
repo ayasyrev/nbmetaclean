@@ -29,6 +29,11 @@ parser.add_argument(
     help="Not strict mode.",
 )
 parser.add_argument(
+    "--not_exec",
+    action="store_true",
+    help="Ignore notebooks with all code cells without execution_count.",
+)
+parser.add_argument(
     "-V",
     "--verbose",
     action="store_true",
@@ -39,6 +44,7 @@ parser.add_argument(
 def app_check() -> None:
     """Check notebooks for correct sequence of execution_count and errors in outputs."""
     cfg = parser.parse_args()
+    print(cfg)
     if not cfg.ec and not cfg.err:
         print(
             "No checks are selected. Please select at least one check: "
@@ -53,7 +59,11 @@ def app_check() -> None:
     if cfg.ec:
         wrong_ec = []
         for nb in nb_files:
-            result = check_nb_ec(read_nb(nb), not cfg.not_strict)
+            result = check_nb_ec(
+                read_nb(nb),
+                not cfg.not_strict,
+                cfg.not_exec,
+            )
             if not result:
                 wrong_ec.append(nb)
 
