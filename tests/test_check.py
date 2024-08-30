@@ -60,6 +60,10 @@ def test_check_nb_ec():
     result = check_nb_ec(test_nb, strict=False)
     assert not result
 
+    # check with `no_exec` option should be False
+    result = check_nb_ec(test_nb, strict=False, no_exec=True)
+    assert not result
+
 
 def test_check_nb_errors():
     """test check_nb_errors"""
