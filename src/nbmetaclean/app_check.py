@@ -1,4 +1,5 @@
 import argparse
+from pathlib import Path
 import sys
 
 from .check import check_nb_ec, check_nb_errors, check_nb_warnings
@@ -47,6 +48,53 @@ parser.add_argument(
 )
 
 
+def check_ec(nb_files: list[Path], strict: bool, no_exec: bool) -> list[Path]:
+    """Check notebooks for correct sequence of execution_count and errors in outputs."""
+    wrong_ec = []
+    for nb in nb_files:
+        result = check_nb_ec(
+            read_nb(nb),
+            strict,
+            no_exec,
+        )
+        if not result:
+            wrong_ec.append(nb)
+
+    return wrong_ec
+
+
+def check_errors(nb_files: list[Path]) -> list[Path]:
+    """Check notebooks for errors in outputs."""
+    nb_errors = []
+    for nb in nb_files:
+        result = check_nb_errors(read_nb(nb))
+        if not result:
+            nb_errors.append(nb)
+
+    return nb_errors
+
+
+def check_warnings(nb_files: list[Path]) -> list[Path]:
+    """Check notebooks for warnings in outputs."""
+    nb_warnings = []
+    for nb in nb_files:
+        result = check_nb_warnings(read_nb(nb))
+        if not result:
+            nb_warnings.append(nb)
+
+    return nb_warnings
+
+
+def print_results(
+    nbs: list[Path],
+    message: str,
+) -> None:
+    """Print results."""
+    print(f"{len(nbs)} notebooks with {message}:")
+    for nb in nbs:
+        print("- ", nb)
+
+
 def app_check() -> None:
     """Check notebooks for correct sequence of execution_count and errors in outputs."""
     cfg = parser.parse_args()
@@ -63,46 +111,24 @@ def app_check() -> None:
 
     check_passed = True
     if cfg.ec:
-        wrong_ec = []
-        for nb in nb_files:
-            result = check_nb_ec(
-                read_nb(nb),
-                not cfg.not_strict,
-                cfg.no_exec,
-            )
-            if not result:
-                wrong_ec.append(nb)
+        wrong_ec = check_ec(nb_files, not cfg.not_strict, cfg.no_exec)
 
         if wrong_ec:
-            print(f"{len(wrong_ec)} notebooks with wrong execution count:")
-            for nb in wrong_ec:
-                print("- ", nb)
+            print_results(wrong_ec, "wrong execution_count")
             check_passed = False
 
     if cfg.err:
-        nb_errors = []
-        for nb in nb_files:
-            result = check_nb_errors(read_nb(nb))
-            if not result:
-                nb_errors.append(nb)
+        nb_errors = check_errors(nb_files)
 
         if nb_errors:
-            print(f"{len(nb_errors)} notebooks with some errors in outputs:")
-            for nb in nb_errors:
-                print("- ", nb)
+            print_results(nb_errors, "errors in outputs")
             check_passed = False
 
     if cfg.warn:
-        nb_warnings = []
-        for nb in nb_files:
-            result = check_nb_warnings(read_nb(nb))
-            if not result:
-                nb_warnings.append(nb)
+        nb_warnings = check_warnings(nb_files)
 
         if nb_warnings:
-            print(f"{len(nb_warnings)} notebooks with some warnings in outputs:")
-            for nb in nb_warnings:
-                print("- ", nb)
+            print_results(nb_warnings, "warnings in outputs")
             check_passed = False
 
     if not check_passed:
