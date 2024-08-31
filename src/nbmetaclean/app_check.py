@@ -1,4 +1,5 @@
 import argparse
+import sys
 
 from .check import check_nb_ec, check_nb_errors, check_nb_warnings
 from .helpers import get_nb_names_from_list, read_nb
@@ -34,7 +35,7 @@ parser.add_argument(
     help="Not strict mode.",
 )
 parser.add_argument(
-    "--not_exec",
+    "--no_exec",
     action="store_true",
     help="Ignore notebooks with all code cells without execution_count.",
 )
@@ -49,7 +50,6 @@ parser.add_argument(
 def app_check() -> None:
     """Check notebooks for correct sequence of execution_count and errors in outputs."""
     cfg = parser.parse_args()
-    print(cfg)
     if not cfg.ec and not cfg.err:
         print(
             "No checks are selected. Please select at least one check: "
@@ -61,13 +61,14 @@ def app_check() -> None:
     if cfg.verbose:
         print(f"Checking {len(nb_files)} notebooks:")
 
+    check_passed = True
     if cfg.ec:
         wrong_ec = []
         for nb in nb_files:
             result = check_nb_ec(
                 read_nb(nb),
                 not cfg.not_strict,
-                cfg.not_exec,
+                cfg.no_exec,
             )
             if not result:
                 wrong_ec.append(nb)
@@ -76,6 +77,7 @@ def app_check() -> None:
             print(f"{len(wrong_ec)} notebooks with wrong execution count:")
             for nb in wrong_ec:
                 print("- ", nb)
+            check_passed = False
 
     if cfg.err:
         nb_errors = []
@@ -88,6 +90,8 @@ def app_check() -> None:
             print(f"{len(nb_errors)} notebooks with some errors in outputs:")
             for nb in nb_errors:
                 print("- ", nb)
+            check_passed = False
+
     if cfg.warn:
         nb_warnings = []
         for nb in nb_files:
@@ -99,6 +103,10 @@ def app_check() -> None:
             print(f"{len(nb_warnings)} notebooks with some warnings in outputs:")
             for nb in nb_warnings:
                 print("- ", nb)
+            check_passed = False
+
+    if not check_passed:
+        sys.exit(1)
 
 
 if __name__ == "__main__":
