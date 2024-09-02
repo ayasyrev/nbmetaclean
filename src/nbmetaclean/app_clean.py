@@ -3,7 +3,7 @@ from pathlib import Path
 from typing import Union
 
 from .clean import CleanConfig, TupleStr, clean_nb_file
-from .helpers import get_nb_names
+from .helpers import get_nb_names_from_list
 
 parser = argparse.ArgumentParser(
     prog="nbclean",
@@ -111,7 +111,7 @@ def print_result(
             print(f"{nb}: {exc}")
 
 
-def app() -> None:
+def app_clean() -> None:
     """Clean metadata and execution_count from Jupyter notebook."""
     cfg = parser.parse_args()
     clean_config = CleanConfig(
@@ -128,13 +128,7 @@ def app() -> None:
         verbose=cfg.verbose if not cfg.silent else False,
     )
     path_list = cfg.path if isinstance(cfg.path, list) else [cfg.path]
-    nb_files: list[Path] = []
-    for path in path_list:
-        path = Path(path)
-        if path.exists():
-            nb_files.extend(get_nb_names(path, hidden=cfg.clean_hidden_nbs))
-        else:
-            print(f"{path} not exists!")
+    nb_files = get_nb_names_from_list(path_list, hidden=cfg.clean_hidden_nbs)
 
     cleaned, errors = clean_nb_file(
         nb_files,
@@ -146,4 +140,4 @@ def app() -> None:
 
 
 if __name__ == "__main__":
-    app()
+    app_clean()

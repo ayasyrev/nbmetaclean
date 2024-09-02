@@ -5,3 +5,10 @@
   files: \.ipynb$
   language: python
   language_version: python3
+- id: nbcheck
+  name: nbcheck
+  description: Check Jupyter Notebooks for correct sequence of execution_count and (or) errors in outputs.
+  entry: nbcheck
+  files: \.ipynb$
+  language: python
+  language_version: python3

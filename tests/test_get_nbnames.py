@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from nbmetaclean.helpers import get_nb_names, is_notebook
+from nbmetaclean.helpers import get_nb_names, get_nb_names_from_list, is_notebook
 
 
 def test_is_notebook():
@@ -26,12 +26,12 @@ def test_get_nb_names():
 
     # path as argument
     names = get_nb_names(path)
-    assert len(names) == 2
+    assert len(names) == 3
     names.sort(key=lambda x: x.name)
     assert names[0] == file
     # path as argument. add hidden files
     names = get_nb_names(path, hidden=True)
-    assert len(names) == 3
+    assert len(names) == 4
     try:
         get_nb_names("wrong_name")
         assert False
@@ -105,3 +105,38 @@ def test_get_nb_names_recursive_hidden(tmp_path: Path):
     assert len(files) == 2
     files = get_nb_names(tmp_path, hidden=True)
     assert len(files) == 6
+
+
+def test_get_nb_names_from_list():
+    """test get_nb_names_from_list"""
+    path = Path("tests/test_nbs")
+    # filename as argument
+    file = path / "test_nb_1.ipynb"
+    names = get_nb_names_from_list(file)
+    assert len(names) == 1
+    assert names[0] == file
+
+    # filename as list
+    names = get_nb_names_from_list([file])
+    assert len(names) == 1
+    assert names[0] == file
+
+    # filename but not nb
+    names = get_nb_names_from_list("tests/test_clean.py")
+    assert len(names) == 0
+
+    # path as list, not all notebooks
+    names = get_nb_names_from_list([file, "wrong_name", "tests/test_clean.py"])
+    assert len(names) == 1
+    assert names[0] == file
+
+    # folder as argument
+    names = get_nb_names_from_list(path)
+    assert len(names) == 3
+    names.sort(key=lambda x: x.name)
+    assert names[0] == file
+    # path as argument. add hidden files
+    names = get_nb_names(path, hidden=True)
+    assert len(names) == 4
+    names = get_nb_names_from_list("wrong_name")
+    assert len(names) == 0
