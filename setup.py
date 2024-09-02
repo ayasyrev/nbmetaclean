@@ -1,7 +1,6 @@
 from setuptools import setup
 
 
-REQUIREMENTS_FILENAME = "requirements.txt"
 REQUIREMENTS_TEST_FILENAME = "requirements_test.txt"
 REQUIREMENTS_DEV_FILENAME = "requirements_dev.txt"
 
@@ -15,7 +14,7 @@ def load_requirements(filename: str) -> list[str]:
         return []
 
 
-REQUIRED = load_requirements(REQUIREMENTS_FILENAME)
+REQUIRED = []
 TEST_REQUIRED = load_requirements(REQUIREMENTS_TEST_FILENAME)
 DEV_REQUIRED = load_requirements(REQUIREMENTS_DEV_FILENAME)
 
