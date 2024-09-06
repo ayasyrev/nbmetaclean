@@ -100,10 +100,12 @@ def print_results(
 def app_check() -> None:
     """Check notebooks for correct sequence of execution_count and errors in outputs."""
     cfg = parser.parse_args()
-    if not cfg.ec and not cfg.err:
+    if not cfg.ec and not cfg.err and not cfg.warn:
         print(
             "No checks are selected. Please select at least one check: "
-            "--ec (for execution_count) or --err (for errors in outputs)."
+            "--ec (for execution_count) or "
+            "--err (for errors in outputs) or "
+            "--warn (for warnings in outputs)."
         )
         return
 
