@@ -139,7 +139,7 @@ If you want to clear outputs, add `--clear_outputs` at command line or `[ --clea
 ```yaml
 repos:
     - repo: https://github.com/ayasyrev/nbmetaclean
-        rev: 0.0.10
+        rev: 0.1
         hooks:
         - id: nbclean
           args: [ --clean_outputs ]
