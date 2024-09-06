@@ -1,9 +1,11 @@
+from __future__ import annotations
+
 import argparse
 from pathlib import Path
 import sys
 
-from .check import check_nb_ec, check_nb_errors, check_nb_warnings
-from .helpers import get_nb_names_from_list, read_nb
+from nbmetaclean.check import check_nb_ec, check_nb_errors, check_nb_warnings
+from nbmetaclean.helpers import get_nb_names_from_list, read_nb
 
 parser = argparse.ArgumentParser(
     prog="nbcheck",

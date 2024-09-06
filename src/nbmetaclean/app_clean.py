@@ -1,9 +1,11 @@
+from __future__ import annotations
+
 import argparse
 from pathlib import Path
 from typing import Union
 
-from .clean import CleanConfig, TupleStr, clean_nb_file
-from .helpers import get_nb_names_from_list
+from nbmetaclean.clean import CleanConfig, TupleStr, clean_nb_file
+from nbmetaclean.helpers import get_nb_names_from_list
 
 parser = argparse.ArgumentParser(
     prog="nbclean",
