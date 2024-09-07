@@ -23,6 +23,21 @@ example_nbs_path = Path("tests/test_nbs")
 nb_name = "test_nb_3_ec.ipynb"
 
 
+def test_run_script():
+    """test run script"""
+    app_path = Path("src/nbmetaclean/app_check.py")
+    run_result = subprocess.run(
+        ["python", app_path, "-h"], capture_output=True, check=False
+    )
+    assert run_result.returncode == 0
+    res_out = run_result.stdout.decode("utf-8")
+    assert res_out.startswith(
+        "usage: nbcheck [-h] [--ec] [--err] [--warn] [--not_strict] [--no_exec]"
+    )
+    res_err = run_result.stderr.decode("utf-8")
+    assert not res_err
+
+
 def test_check_nb_ec(tmp_path: Path):
     """test check `--ec`"""
     # base notebook - no execution_count
@@ -40,10 +55,17 @@ def test_check_nb_ec(tmp_path: Path):
     )
     assert not res_err
 
+    # default execution_count
     res_out, res_err = run_app(test_nb_path, ["--ec"])
     assert res_out.startswith("1 notebooks with wrong execution_count:\n")
     assert res_out.endswith("test_nb_3_ec.ipynb\n")
     assert not res_err
+
+    # `-V` option
+    res_out, res_err = run_app(test_nb_path, ["--ec", "-V"])
+    assert res_out.startswith("Checking 1 notebooks.\n")
+    assert not res_err
+
     # check with `no_exec` option
     res_out, res_err = run_app(test_nb_path, ["--ec", "--no_exec"])
     assert not res_out

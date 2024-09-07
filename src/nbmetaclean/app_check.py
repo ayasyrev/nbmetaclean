@@ -111,7 +111,7 @@ def app_check() -> None:
 
     nb_files = get_nb_names_from_list(cfg.path)
     if cfg.verbose:
-        print(f"Checking {len(nb_files)} notebooks:")
+        print(f"Checking {len(nb_files)} notebooks.")
 
     check_passed = True
     if cfg.ec:
