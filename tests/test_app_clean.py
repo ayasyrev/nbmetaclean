@@ -159,5 +159,5 @@ def test_clean_nb_ec_output(tmp_path: Path):
     res_out, res_err = run_app(tmp_path, [])
     assert res_out.startswith("cleaned: 2 notebooks\n")
     assert nb_name_clean in res_out
-    assert res_out.endswith("test_nb_3_ec.ipynb\n")
+    assert nb_name_clean_2 in res_out
     assert not res_err
