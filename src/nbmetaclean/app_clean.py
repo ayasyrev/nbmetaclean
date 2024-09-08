@@ -141,5 +141,5 @@ def app_clean() -> None:
         print_result(cleaned, errors, clean_config, path_list, len(nb_files))
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
     app_clean()

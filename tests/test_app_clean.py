@@ -159,5 +159,17 @@ def test_clean_nb_ec_output(tmp_path: Path):
     res_out, res_err = run_app(tmp_path, [])
     assert res_out.startswith("cleaned: 2 notebooks\n")
     assert nb_name_clean in res_out
-    assert res_out.endswith("test_nb_3_ec.ipynb\n")
+    assert nb_name_clean_2 in res_out
+    assert not res_err
+
+
+def test_clean_nb_wrong_file(tmp_path: Path):
+    """test app_clean with wrong file"""
+    nb_name = tmp_path / "wrong.ipynb"
+    with nb_name.open("w", encoding="utf-8") as fh:
+        fh.write("some text")
+
+    res_out, res_err = run_app(nb_name, [])
+    assert res_out.startswith("with errors: 1")
+    assert str(nb_name) in res_out
     assert not res_err
