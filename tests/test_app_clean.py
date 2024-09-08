@@ -21,11 +21,11 @@ def run_app(
 
 
 example_nbs_path = Path("tests/test_nbs")
-nb_name_clean = "test_nb_2_clean.ipynb"
 
 
 def test_clean_nb_metadata(tmp_path: Path):
     """test clean_nb_metadata"""
+    nb_name_clean = "test_nb_2_clean.ipynb"
     test_nb = read_nb(example_nbs_path / nb_name_clean)
     test_nb_path = tmp_path / nb_name_clean
     write_nb(test_nb, test_nb_path)
@@ -79,4 +79,85 @@ def test_clean_nb_metadata(tmp_path: Path):
     assert res_out.startswith("Path: ")
     assert "cleaned:" in res_out
     assert res_out.endswith("test_nb_2_clean.ipynb\n")
+    assert not res_err
+
+
+def test_clean_nb_ec_output(tmp_path: Path):
+    """test execution count and output"""
+    nb_name_clean = "test_nb_2_clean.ipynb"
+    test_nb = read_nb(example_nbs_path / nb_name_clean)
+    test_nb_path = tmp_path / nb_name_clean
+
+    test_nb["cells"][1]["execution_count"] = 1
+    test_nb["cells"][1]["outputs"][0]["execution_count"] = 1
+    write_nb(test_nb, test_nb_path)
+
+    # default settings
+    res_out, res_err = run_app(test_nb_path, [])
+    assert res_out.startswith("cleaned:")
+    assert res_out.endswith("test_nb_2_clean.ipynb\n")
+    assert not res_err
+    nb = read_nb(test_nb_path)
+    assert nb["cells"][1]["execution_count"] is None
+    assert nb["cells"][1]["outputs"][0]["data"] == {"text/plain": ["2"]}
+    assert nb["cells"][1]["outputs"][0]["execution_count"] is None
+
+    # dry run
+    write_nb(test_nb, test_nb_path)
+    res_out, res_err = run_app(test_nb_path, ["-D"])
+    assert res_out.startswith("cleaned:")
+    assert res_out.endswith("test_nb_2_clean.ipynb\n")
+    assert not res_err
+    nb = read_nb(test_nb_path)
+    assert nb["cells"][1]["execution_count"] == 1
+    assert nb["cells"][1]["outputs"][0]["execution_count"] == 1
+    # dry, verbose
+    res_out, res_err = run_app(test_nb_path, ["-DV"])
+    assert res_out.startswith("Path: ")
+    assert nb_name_clean in res_out
+    assert res_out.endswith("test_nb_2_clean.ipynb\n")
+    assert not res_err
+
+    # silent
+    write_nb(test_nb, test_nb_path)
+    res_out, res_err = run_app(test_nb_path, ["-s"])
+    assert not res_out
+    assert not res_err
+    nb = read_nb(test_nb_path)
+    assert nb["cells"][1]["execution_count"] is None
+    assert nb["cells"][1]["outputs"][0]["execution_count"] is None
+
+    # clean output
+    write_nb(test_nb, test_nb_path)
+    res_out, res_err = run_app(test_nb_path, ["--clear_outputs"])
+    assert res_out.startswith("cleaned:")
+    assert res_out.endswith("test_nb_2_clean.ipynb\n")
+    assert not res_err
+    nb = read_nb(test_nb_path)
+    assert nb["cells"][1]["execution_count"] is None
+    assert nb["cells"][1]["outputs"] == []
+
+    # path as arg
+    write_nb(test_nb, test_nb_path)
+    res_out, res_err = run_app(test_nb_path, [])
+    assert res_out.startswith("cleaned:")
+    assert res_out.endswith("test_nb_2_clean.ipynb\n")
+    assert not res_err
+    nb = read_nb(test_nb_path)
+    assert nb["metadata"]["authors"][0]["name"] == "Andrei Yasyrev"
+    assert nb["cells"][1]["execution_count"] is None
+    assert nb["cells"][1]["outputs"][0]["execution_count"] is None
+
+    # two nbs
+    write_nb(test_nb, test_nb_path)
+    # add second notebook
+    nb_name_clean_2 = "test_nb_3_ec.ipynb"
+    test_nb_2 = read_nb(example_nbs_path / nb_name_clean_2)
+    test_nb_2["metadata"]["some key"] = "some value"
+    write_nb(test_nb_2, tmp_path / nb_name_clean_2)
+
+    res_out, res_err = run_app(tmp_path, [])
+    assert res_out.startswith("cleaned: 2 notebooks\n")
+    assert nb_name_clean in res_out
+    assert res_out.endswith("test_nb_3_ec.ipynb\n")
     assert not res_err
