@@ -305,9 +305,9 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#nbclean" class="md-nav__link">
+  <a href="#nbmetaclean_1" class="md-nav__link">
     <span class="md-ellipsis">
-      nbclean
+      nbmetaclean
     </span>
   </a>
   
@@ -352,6 +352,15 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#without-install" class="md-nav__link">
+    <span class="md-ellipsis">
+      Without install:
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#install" class="md-nav__link">
     <span class="md-ellipsis">
       Install:
@@ -371,13 +380,13 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#nbclean_1" class="md-nav__link">
+  <a href="#nbmetaclean_2" class="md-nav__link">
     <span class="md-ellipsis">
-      Nbclean
+      Nbmetaclean
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Nbclean">
+    <nav class="md-nav" aria-label="Nbmetaclean">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -524,9 +533,9 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#nbclean" class="md-nav__link">
+  <a href="#nbmetaclean_1" class="md-nav__link">
     <span class="md-ellipsis">
-      nbclean
+      nbmetaclean
     </span>
   </a>
   
@@ -571,6 +580,15 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#without-install" class="md-nav__link">
+    <span class="md-ellipsis">
+      Without install:
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#install" class="md-nav__link">
     <span class="md-ellipsis">
       Install:
@@ -590,13 +608,13 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#nbclean_1" class="md-nav__link">
+  <a href="#nbmetaclean_2" class="md-nav__link">
     <span class="md-ellipsis">
-      Nbclean
+      Nbmetaclean
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Nbclean">
+    <nav class="md-nav" aria-label="Nbmetaclean">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -732,7 +750,7 @@ Can be used as command line tool or pre-commit hook.</p>
 <p><a href="https://pypi.org/project/nbmetaclean/"><img alt="PyPI - Python Version" src="https://img.shields.io/pypi/pyversions/benchmark-utils" /></a>
 <a href="https://badge.fury.io/py/nbmetaclean"><img alt="PyPI Status" src="https://badge.fury.io/py/nbmetaclean.svg" /></a>
 <a href="https://github.com/ayasyrev/nbmetaclean/actions?workflow=Tests"><img alt="Tests" src="https://github.com/ayasyrev/nbmetaclean/workflows/Tests/badge.svg" /></a>  <a href="https://codecov.io/gh/ayasyrev/nbmetaclean"><img alt="Codecov" src="https://codecov.io/gh/ayasyrev/nbmetaclean/branch/main/graph/badge.svg" /></a></p>
-<h2 id="nbclean">nbclean</h2>
+<h2 id="nbmetaclean_1">nbmetaclean</h2>
 <p>Clean Jupyter Notebooks metadata, execution_count and optionally output.</p>
 <h2 id="nbcheck">nbcheck</h2>
 <p>Check Jupyter Notebooks for errors and (or) warnings in outputs.</p>
@@ -743,20 +761,30 @@ You do not need to install nbmetaclean, it will be installed automatically.
 add to <code>.pre-commit-config.yaml</code>:
 <div class="highlight"><pre><span></span><code><span class="nt">repos</span><span class="p">:</span>
 <span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">repo</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://github.com/ayasyrev/nbmetaclean</span>
-<span class="w">        </span><span class="l l-Scalar l-Scalar-Plain">rev</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.1</span>
+<span class="w">        </span><span class="l l-Scalar l-Scalar-Plain">rev</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.1.1</span>
 <span class="w">        </span><span class="l l-Scalar l-Scalar-Plain">hooks</span><span class="p p-Indicator">:</span>
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nbclean</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nbmetaclean</span>
 <span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nbcheck</span>
 <span class="w">          </span><span class="nt">args</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="w"> </span><span class="nv">--ec</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">--err</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">--warn</span><span class="w"> </span><span class="p p-Indicator">]</span>
 </code></pre></div></p>
 <h3 id="command-line-tool">Command line tool</h3>
+<h4 id="without-install">Without install:</h4>
+<p>If you use <a href="https://github.com/astral-sh/uv">uv</a> package manager, you can nbmetaclean without install.
+To clean notebooks:
+<div class="highlight"><pre><span></span><code>uvx<span class="w"> </span>nbmetaclean
+</code></pre></div>
+To check notebooks:
+<div class="highlight"><pre><span></span><code>uvx<span class="w"> </span>--from<span class="w"> </span>nbmetaclean<span class="w"> </span>nbcheck<span class="w"> </span>--ec<span class="w"> </span>--err<span class="w"> </span>--warn
+</code></pre></div></p>
 <h4 id="install">Install:</h4>
 <div class="highlight"><pre><span></span><code>pip<span class="w"> </span>install<span class="w"> </span>nbmetaclean
 </code></pre></div>
 <p>Usage:
-run <code>nbclean</code> or <code>nbcheck</code> command with <code>path</code> to notebook or folder with notebooks.
+run <code>nbmetaclean</code> or <code>nbcheck</code> command with <code>path</code> to notebook or folder with notebooks.
 If no <code>path</code> is provided, current directory will be used as <code>path</code>.</p>
-<div class="highlight"><pre><span></span><code>nbclean
+<p>It is possible to use <code>nbclean</code> command instead of <code>nbmetaclean</code>.
+<code>nbmetaclean</code> will be used by defaults in favour of usage with <code>uvx</code></p>
+<div class="highlight"><pre><span></span><code>nbmetaclean
 </code></pre></div>
 <p><code>nbcheck</code> should be run with flags:
 - <code>--ec</code> for execution_count check
@@ -764,7 +792,7 @@ If no <code>path</code> is provided, current directory will be used as <code>pat
 - <code>--warn</code> for check warnings in outputs
 <div class="highlight"><pre><span></span><code>nbcheck<span class="w"> </span>--ec<span class="w"> </span>--err<span class="w"> </span>--warn
 </code></pre></div></p>
-<h2 id="nbclean_1">Nbclean</h2>
+<h2 id="nbmetaclean_2">Nbmetaclean</h2>
 <h3 id="default-settings">Default settings</h3>
 <p>By default, the following settings are used:</p>
 <ul>
@@ -776,9 +804,9 @@ If no <code>path</code> is provided, current directory will be used as <code>pat
 </ul>
 <h3 id="arguments">Arguments</h3>
 <p>Check available arguments:</p>
-<div class="highlight"><pre><span></span><code>nbclean<span class="w"> </span>-h
+<div class="highlight"><pre><span></span><code>nbmetaclean<span class="w"> </span>-h
 
-usage:<span class="w"> </span>nbclean<span class="w"> </span><span class="o">[</span>-h<span class="o">]</span><span class="w"> </span><span class="o">[</span>-s<span class="o">]</span><span class="w"> </span><span class="o">[</span>--not_ec<span class="o">]</span><span class="w"> </span><span class="o">[</span>--not-pt<span class="o">]</span><span class="w"> </span><span class="o">[</span>--dont_clear_nb_metadata<span class="o">]</span><span class="w"> </span><span class="o">[</span>--clear_cell_metadata<span class="o">]</span><span class="w"> </span><span class="o">[</span>--clear_outputs<span class="o">]</span>
+usage:<span class="w">  </span>nbmetaclean<span class="w"> </span><span class="o">[</span>-h<span class="o">]</span><span class="w"> </span><span class="o">[</span>-s<span class="o">]</span><span class="w"> </span><span class="o">[</span>--not_ec<span class="o">]</span><span class="w"> </span><span class="o">[</span>--not-pt<span class="o">]</span><span class="w"> </span><span class="o">[</span>--dont_clear_nb_metadata<span class="o">]</span><span class="w"> </span><span class="o">[</span>--clear_cell_metadata<span class="o">]</span><span class="w"> </span><span class="o">[</span>--clear_outputs<span class="o">]</span>
 <span class="o">[</span>--nb_metadata_preserve_mask<span class="w"> </span>NB_METADATA_PRESERVE_MASK<span class="w"> </span><span class="o">[</span>NB_METADATA_PRESERVE_MASK<span class="w"> </span>...<span class="o">]]</span>
 <span class="o">[</span>--cell_metadata_preserve_mask<span class="w"> </span>CELL_METADATA_PRESERVE_MASK<span class="w"> </span><span class="o">[</span>CELL_METADATA_PRESERVE_MASK<span class="w"> </span>...<span class="o">]]</span><span class="w"> </span><span class="o">[</span>--dont_merge_masks<span class="o">]</span><span class="w"> </span><span class="o">[</span>--clean_hidden_nbs<span class="o">]</span><span class="w"> </span><span class="o">[</span>-D<span class="o">]</span><span class="w"> </span><span class="o">[</span>-V<span class="o">]</span>
 <span class="o">[</span>path<span class="w"> </span>...<span class="o">]</span>
@@ -811,23 +839,23 @@ options:
 <p>If you want to leave execution_count add <code>--not_ec</code> flag at command line or <code>args: [--not_ec]</code> line to <code>.pre-commit-config.yaml</code>.</p>
 <div class="highlight"><pre><span></span><code><span class="nt">repos</span><span class="p">:</span>
 <span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">repo</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://github.com/ayasyrev/nbmetaclean</span>
-<span class="w">        </span><span class="l l-Scalar l-Scalar-Plain">rev</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.1</span>
+<span class="w">        </span><span class="l l-Scalar l-Scalar-Plain">rev</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.1.1</span>
 <span class="w">        </span><span class="l l-Scalar l-Scalar-Plain">hooks</span><span class="p p-Indicator">:</span>
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nbclean</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nbmetaclean</span>
 <span class="w">          </span><span class="nt">args</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="w"> </span><span class="nv">--not_ec</span><span class="w"> </span><span class="p p-Indicator">]</span>
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>nbclean<span class="w"> </span>--not_ec
+<div class="highlight"><pre><span></span><code>nbmetaclean<span class="w"> </span>--not_ec
 </code></pre></div>
 <h3 id="clear-outputs">Clear outputs</h3>
 <p>If you want to clear outputs, add <code>--clear_outputs</code> at command line or <code>[ --clean_outputs ]</code> line to <code>.pre-commit-config.yaml</code>.
 <div class="highlight"><pre><span></span><code><span class="nt">repos</span><span class="p">:</span>
 <span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">repo</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://github.com/ayasyrev/nbmetaclean</span>
-<span class="w">        </span><span class="l l-Scalar l-Scalar-Plain">rev</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.0.10</span>
+<span class="w">        </span><span class="l l-Scalar l-Scalar-Plain">rev</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.1.1</span>
 <span class="w">        </span><span class="l l-Scalar l-Scalar-Plain">hooks</span><span class="p p-Indicator">:</span>
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nbclean</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nbmetaclean</span>
 <span class="w">          </span><span class="nt">args</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="w"> </span><span class="nv">--clean_outputs</span><span class="w"> </span><span class="p p-Indicator">]</span>
 </code></pre></div></p>
-<div class="highlight"><pre><span></span><code>nbclean<span class="w"> </span>--clean_outputs
+<div class="highlight"><pre><span></span><code>nbmetaclean<span class="w"> </span>--clean_outputs
 </code></pre></div>
 <h2 id="nbcheck_1">Nbcheck</h2>
 <p>Check Jupyter Notebooks for correct execution_count, errors and (or) warnings in outputs.</p>
@@ -839,7 +867,7 @@ All cells must be executed, one after another.</p>
 <p>pre-commit config example:
 <div class="highlight"><pre><span></span><code><span class="nt">repos</span><span class="p">:</span>
 <span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">repo</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://github.com/ayasyrev/nbmetaclean</span>
-<span class="w">        </span><span class="l l-Scalar l-Scalar-Plain">rev</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.1</span>
+<span class="w">        </span><span class="l l-Scalar l-Scalar-Plain">rev</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.1.1</span>
 <span class="w">        </span><span class="l l-Scalar l-Scalar-Plain">hooks</span><span class="p p-Indicator">:</span>
 <span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nbcheck</span>
 <span class="w">          </span><span class="nt">args</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="w"> </span><span class="nv">--ec</span><span class="w"> </span><span class="p p-Indicator">]</span>
@@ -852,7 +880,7 @@ All cells must be executed, one after another.</p>
 <p>pre-commit config example:
 <div class="highlight"><pre><span></span><code><span class="nt">repos</span><span class="p">:</span>
 <span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">repo</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://github.com/ayasyrev/nbmetaclean</span>
-<span class="w">        </span><span class="l l-Scalar l-Scalar-Plain">rev</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.1</span>
+<span class="w">        </span><span class="l l-Scalar l-Scalar-Plain">rev</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.1.1</span>
 <span class="w">        </span><span class="l l-Scalar l-Scalar-Plain">hooks</span><span class="p p-Indicator">:</span>
 <span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nbcheck</span>
 <span class="w">          </span><span class="nt">args</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="w"> </span><span class="nv">--ec</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">--not_strict</span><span class="w"> </span><span class="p p-Indicator">]</span>
@@ -866,7 +894,7 @@ If notebook has cells with execution_count and without execution_count, pre-comm
 <p>pre-commit config example:
 <div class="highlight"><pre><span></span><code><span class="nt">repos</span><span class="p">:</span>
 <span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">repo</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://github.com/ayasyrev/nbmetaclean</span>
-<span class="w">        </span><span class="l l-Scalar l-Scalar-Plain">rev</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.1</span>
+<span class="w">        </span><span class="l l-Scalar l-Scalar-Plain">rev</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.1.1</span>
 <span class="w">        </span><span class="l l-Scalar l-Scalar-Plain">- id</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nbcheck</span>
 <span class="w">          </span><span class="l l-Scalar l-Scalar-Plain">args</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="w"> </span><span class="nv">--ec</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">--no_exec</span><span class="w"> </span><span class="p p-Indicator">]</span>
 </code></pre></div></p>
@@ -878,7 +906,7 @@ If notebook has cells with execution_count and without execution_count, pre-comm
 <p>pre-commit config example:
 <div class="highlight"><pre><span></span><code><span class="nt">repos</span><span class="p">:</span>
 <span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">repo</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://github.com/ayasyrev/nbmetaclean</span>
-<span class="w">        </span><span class="l l-Scalar l-Scalar-Plain">rev</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.1</span>
+<span class="w">        </span><span class="l l-Scalar l-Scalar-Plain">rev</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.1.1</span>
 <span class="w">        </span><span class="l l-Scalar l-Scalar-Plain">hooks</span><span class="p p-Indicator">:</span>
 <span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nbcheck</span>
 <span class="w">          </span><span class="nt">args</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="w"> </span><span class="nv">--err</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">--warn</span><span class="w"> </span><span class="p p-Indicator">]</span>
