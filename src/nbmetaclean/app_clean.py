@@ -1,12 +1,14 @@
+from __future__ import annotations
+
 import argparse
 from pathlib import Path
 from typing import Union
 
-from .clean import CleanConfig, TupleStr, clean_nb_file
-from .helpers import get_nb_names_from_list
+from nbmetaclean.clean import CleanConfig, TupleStr, clean_nb_file
+from nbmetaclean.helpers import get_nb_names_from_list
 
 parser = argparse.ArgumentParser(
-    prog="nbclean",
+    prog="nbmetaclean",
     description="Clean metadata and execution_count from Jupyter notebooks.",
 )
 parser.add_argument(
@@ -139,5 +141,5 @@ def app_clean() -> None:
         print_result(cleaned, errors, clean_config, path_list, len(nb_files))
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
     app_clean()

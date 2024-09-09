@@ -1,9 +1,11 @@
+from __future__ import annotations
+
 import argparse
 from pathlib import Path
 import sys
 
-from .check import check_nb_ec, check_nb_errors, check_nb_warnings
-from .helpers import get_nb_names_from_list, read_nb
+from nbmetaclean.check import check_nb_ec, check_nb_errors, check_nb_warnings
+from nbmetaclean.helpers import get_nb_names_from_list, read_nb
 
 parser = argparse.ArgumentParser(
     prog="nbcheck",
@@ -98,16 +100,18 @@ def print_results(
 def app_check() -> None:
     """Check notebooks for correct sequence of execution_count and errors in outputs."""
     cfg = parser.parse_args()
-    if not cfg.ec and not cfg.err:
+    if not cfg.ec and not cfg.err and not cfg.warn:
         print(
             "No checks are selected. Please select at least one check: "
-            "--ec (for execution_count) or --err (for errors in outputs)."
+            "--ec (for execution_count) or "
+            "--err (for errors in outputs) or "
+            "--warn (for warnings in outputs)."
         )
         return
 
     nb_files = get_nb_names_from_list(cfg.path)
     if cfg.verbose:
-        print(f"Checking {len(nb_files)} notebooks:")
+        print(f"Checking {len(nb_files)} notebooks.")
 
     check_passed = True
     if cfg.ec:
@@ -135,5 +139,5 @@ def app_check() -> None:
         sys.exit(1)
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
     app_check()
