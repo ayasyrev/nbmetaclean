@@ -3,9 +3,9 @@ repos:
 
   hooks:
     # local version for testing
-    - id: nbclean
-      name: nbclean local
-      entry: nbclean
+    - id: nbmetaclean
+      name: nbmetaclean local
+      entry: nbmetaclean
       language: system
       files: \.ipynb
 

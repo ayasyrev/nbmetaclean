@@ -12,7 +12,7 @@ Can be used as a pre-commit hook or as a command line tool.
 [![PyPI Status](https://badge.fury.io/py/nbmetaclean.svg)](https://badge.fury.io/py/nbmetaclean)
 [![Tests](https://github.com/ayasyrev/nbmetaclean/workflows/Tests/badge.svg)](https://github.com/ayasyrev/nbmetaclean/actions?workflow=Tests)  [![Codecov](https://codecov.io/gh/ayasyrev/nbmetaclean/branch/main/graph/badge.svg)](https://codecov.io/gh/ayasyrev/nbmetaclean)
 
-## nbclean
+## nbmetaclean
 
 Clean Jupyter Notebooks metadata, execution_count and optionally output.
 
@@ -29,9 +29,9 @@ add to `.pre-commit-config.yaml`:
 ```yaml
 repos:
     - repo: https://github.com/ayasyrev/nbmetaclean
-        rev: 0.1
+        rev: 0.1.1
         hooks:
-        - id: nbclean
+        - id: nbmetaclean
         - id: nbcheck
           args: [ --ec, --err, --warn ]
 ```
@@ -40,17 +40,33 @@ repos:
 
 ### Command line tool
 
+#### Without install:
+If you use [uv](https://github.com/astral-sh/uv) package manager, you can nbmetaclean without install.
+To clean notebooks:
+```bash
+uvx nbmetaclean
+```
+To check notebooks:
+```bash
+uvx --from nbmetaclean nbcheck --ec --err --warn
+```
+
 ####  Install:
 ```bash
 pip install nbmetaclean
 ```
 
 Usage:
-run `nbclean` or `nbcheck` command with `path` to notebook or folder with notebooks.
+run `nbmetaclean` or `nbcheck` command with `path` to notebook or folder with notebooks.
 If no `path` is provided, current directory will be used as `path`.
 
+It is possible to use `nbclean` command instead of `nbmetaclean`.
+`nbmetaclean` will be used by defaults in favour of usage with `uvx`
+
+
+
 ```bash
-nbclean
+nbmetaclean
 ```
 
 `nbcheck` should be run with flags:
@@ -62,7 +78,7 @@ nbcheck --ec --err --warn
 ```
 
 
-## Nbclean
+## Nbmetaclean
 ### Default settings
 By default, the following settings are used:
 
@@ -81,9 +97,9 @@ By default, the following settings are used:
 Check available arguments:
 
 ```bash
-nbclean -h
+nbmetaclean -h
 
-usage: nbclean [-h] [-s] [--not_ec] [--not-pt] [--dont_clear_nb_metadata] [--clear_cell_metadata] [--clear_outputs]
+usage: nbmetaclean [-h] [-s] [--not_ec] [--not-pt] [--dont_clear_nb_metadata] [--clear_cell_metadata] [--clear_outputs]
 [--nb_metadata_preserve_mask NB_METADATA_PRESERVE_MASK [NB_METADATA_PRESERVE_MASK ...]]
 [--cell_metadata_preserve_mask CELL_METADATA_PRESERVE_MASK [CELL_METADATA_PRESERVE_MASK ...]] [--dont_merge_masks] [--clean_hidden_nbs] [-D] [-V]
 [path ...]
@@ -119,14 +135,14 @@ If you want to leave execution_count add `--not_ec` flag at command line or `arg
 ```yaml
 repos:
     - repo: https://github.com/ayasyrev/nbmetaclean
-        rev: 0.1
+        rev: 0.1.1
         hooks:
-        - id: nbclean
+        - id: nbmetaclean
           args: [ --not_ec ]
 ```
 
 ```bash
-nbclean --not_ec
+nbmetaclean --not_ec
 ```
 
 ### Clear outputs
@@ -134,14 +150,14 @@ If you want to clear outputs, add `--clear_outputs` at command line or `[ --clea
 ```yaml
 repos:
     - repo: https://github.com/ayasyrev/nbmetaclean
-        rev: 0.1
+        rev: 0.1.1
         hooks:
-        - id: nbclean
+        - id: nbmetaclean
           args: [ --clean_outputs ]
 ```
 
 ```bash
-nbclean --clean_outputs
+nbmetaclean --clean_outputs
 ```
 
 ## Nbcheck
@@ -158,7 +174,7 @@ pre-commit config example:
 ```yaml
 repos:
     - repo: https://github.com/ayasyrev/nbmetaclean
-        rev: 0.1
+        rev: 0.1.1
         hooks:
         - id: nbcheck
           args: [ --ec ]
@@ -176,7 +192,7 @@ pre-commit config example:
 ```yaml
 repos:
     - repo: https://github.com/ayasyrev/nbmetaclean
-        rev: 0.1
+        rev: 0.1.1
         hooks:
         - id: nbcheck
           args: [ --ec, --not_strict ]
@@ -196,7 +212,7 @@ pre-commit config example:
 ```yaml
 repos:
     - repo: https://github.com/ayasyrev/nbmetaclean
-        rev: 0.1
+        rev: 0.1.1
         - id: nbcheck
           args: [ --ec, --no_exec ]
 ```
@@ -216,7 +232,7 @@ pre-commit config example:
 ```yaml
 repos:
     - repo: https://github.com/ayasyrev/nbmetaclean
-        rev: 0.1
+        rev: 0.1.1
         hooks:
         - id: nbcheck
           args: [ --err, --warn ]

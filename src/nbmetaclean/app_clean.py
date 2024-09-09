@@ -8,7 +8,7 @@ from nbmetaclean.clean import CleanConfig, TupleStr, clean_nb_file
 from nbmetaclean.helpers import get_nb_names_from_list
 
 parser = argparse.ArgumentParser(
-    prog="nbclean",
+    prog="nbmetaclean",
     description="Clean metadata and execution_count from Jupyter notebooks.",
 )
 parser.add_argument(
