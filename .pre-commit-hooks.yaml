@@ -1,7 +1,7 @@
-- id: nbclean
-  name: nbclean
+- id: nbmetaclean
+  name: nbmetaclean
   description: Clean Jupyter Notebooks metadata and optionally output.
-  entry: nbclean
+  entry: nbmetaclean
   files: \.ipynb$
   language: python
   language_version: python3
