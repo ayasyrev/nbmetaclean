@@ -118,8 +118,8 @@ def print_result(
                 print("- ", nb)
     if errors:
         print(f"with errors: {len(errors)}")
-        for nb, exc in errors:
-            print(f"{nb}: {exc}")
+        for nb in errors:
+            print("- ", nb)
 
 
 def app_clean() -> None:

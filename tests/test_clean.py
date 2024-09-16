@@ -301,21 +301,24 @@ def test_clean_nb_file(tmp_path: Path, capsys: CaptureFixture[str]):
 
 def test_clean_nb_file_errors(capsys: CaptureFixture[str], tmp_path: Path):
     """test clean_nb_file, errors"""
+    # not existing nb
     path = tmp_path / "wrong_name"
     cleaned, errors = clean_nb_file(path)
     assert len(cleaned) == 0
     assert len(errors) == 1
-    assert errors[0][0] == path
-    assert "No such file or directory" in str(errors[0][1])
+    assert errors[0] == path
     captured = capsys.readouterr()
     assert not captured.out
     assert not captured.err
+
+    # not valid nb
     with path.open("w", encoding="utf-8") as fh:
         fh.write("wrong nb")
     cleaned, errors = clean_nb_file(path)
-    assert "wrong_name" in str(errors[0])
     assert len(cleaned) == 0
     assert len(errors) == 1
+    assert errors[0].name == "wrong_name"
+
     captured = capsys.readouterr()
     assert not captured.out
     assert not captured.err

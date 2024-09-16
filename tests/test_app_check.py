@@ -3,6 +3,8 @@ from __future__ import annotations
 from pathlib import Path
 import subprocess
 
+import pytest
+
 from nbmetaclean.helpers import read_nb, write_nb
 from nbmetaclean.version import __version__
 
@@ -150,8 +152,11 @@ def test_check_nb_ec(tmp_path: Path):
 
 def test_check_nb_errors(tmp_path: Path):
     """test check `--err` option."""
-    test_nb_path = tmp_path / nb_name
+    nb_name = "test_nb_3_ec.ipynb"
     test_nb = read_nb(example_nbs_path / nb_name)
+    assert test_nb is not None
+
+    test_nb_path = tmp_path / nb_name
     write_nb(test_nb, test_nb_path)
     res_out, res_err = run_app(test_nb_path, ["--err"])
     assert not res_out
@@ -198,4 +203,17 @@ def test_check_app_version():
 
     res_out, res_err = run_app("-v")
     assert res_out == f"nbcheck from nbmetaclean, version: {__version__}\n"
+    assert not res_err
+
+
+@pytest.mark.parametrize("arg", ["--ec", "--err", "--warn"])
+def test_check_app_read_error(tmp_path: Path, arg: str):
+    """test check_app with wrong nb file."""
+    test_nb_path = tmp_path / "test_nb.ipynb"
+    with open(test_nb_path, "w") as fh:
+        fh.write("")
+
+    res_out, res_err = run_app(test_nb_path, [arg])
+    assert res_out.startswith("1 notebooks with read error:\n")
+    assert res_out.endswith("test_nb.ipynb\n")
     assert not res_err
