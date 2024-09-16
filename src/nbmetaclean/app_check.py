@@ -6,6 +6,8 @@ import sys
 
 from nbmetaclean.check import check_nb_ec, check_nb_errors, check_nb_warnings
 from nbmetaclean.helpers import get_nb_names_from_list, read_nb
+from nbmetaclean.version import __version__
+
 
 parser = argparse.ArgumentParser(
     prog="nbcheck",
@@ -47,6 +49,12 @@ parser.add_argument(
     "--verbose",
     action="store_true",
     help="Verbose mode. Print extra information.",
+)
+parser.add_argument(
+    "-v",
+    "--version",
+    action="store_true",
+    help="Print version information.",
 )
 
 
@@ -100,6 +108,11 @@ def print_results(
 def app_check() -> None:
     """Check notebooks for correct sequence of execution_count and errors in outputs."""
     cfg = parser.parse_args()
+
+    if cfg.version:
+        print(f"nbcheck from nbmetaclean, version: {__version__}")
+        sys.exit(0)
+
     if not cfg.ec and not cfg.err and not cfg.warn:
         print(
             "No checks are selected. Please select at least one check: "
@@ -107,7 +120,7 @@ def app_check() -> None:
             "--err (for errors in outputs) or "
             "--warn (for warnings in outputs)."
         )
-        return
+        sys.exit(1)
 
     nb_files = get_nb_names_from_list(cfg.path)
     if cfg.verbose:

@@ -5,6 +5,7 @@ from pathlib import Path
 import subprocess
 
 from nbmetaclean.helpers import read_nb, write_nb
+from nbmetaclean.version import __version__
 
 
 def run_app(
@@ -172,4 +173,15 @@ def test_clean_nb_wrong_file(tmp_path: Path):
     res_out, res_err = run_app(nb_name, [])
     assert res_out.startswith("with errors: 1")
     assert str(nb_name) in res_out
+    assert not res_err
+
+
+def test_app_clean_version():
+    """test check `--version` option."""
+    res_out, res_err = run_app("--version")
+    assert res_out == f"nbmetaclean version: {__version__}\n"
+    assert not res_err
+
+    res_out, res_err = run_app("-v")
+    assert res_out == f"nbmetaclean version: {__version__}\n"
     assert not res_err
