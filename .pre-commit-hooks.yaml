@@ -5,6 +5,16 @@
   files: \.ipynb$
   language: python
   language_version: python3
+
+# Same as nbmetaclean, for compatibility.
+- id: nbclean
+  name: nbclean
+  description: Clean Jupyter Notebooks metadata and optionally output.
+  entry: nbclean
+  files: \.ipynb$
+  language: python
+  language_version: python3
+
 - id: nbcheck
   name: nbcheck
   description: Check Jupyter Notebooks for correct sequence of execution_count and (or) errors in outputs.
