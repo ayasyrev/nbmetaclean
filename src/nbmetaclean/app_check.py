@@ -58,51 +58,31 @@ parser.add_argument(
 )
 
 
-def check_ec(nb_files: list[Path], strict: bool, no_exec: bool) -> list[Path]:
-    """Check notebooks for correct sequence of execution_count and errors in outputs."""
-    wrong_ec = []
-    for nb in nb_files:
-        result = check_nb_ec(
-            read_nb(nb),
-            strict,
-            no_exec,
-        )
-        if not result:
-            wrong_ec.append(nb)
-
-    return wrong_ec
-
-
-def check_errors(nb_files: list[Path]) -> list[Path]:
-    """Check notebooks for errors in outputs."""
-    nb_errors = []
-    for nb in nb_files:
-        result = check_nb_errors(read_nb(nb))
-        if not result:
-            nb_errors.append(nb)
-
-    return nb_errors
-
-
-def check_warnings(nb_files: list[Path]) -> list[Path]:
-    """Check notebooks for warnings in outputs."""
-    nb_warnings = []
-    for nb in nb_files:
-        result = check_nb_warnings(read_nb(nb))
-        if not result:
-            nb_warnings.append(nb)
-
-    return nb_warnings
-
-
-def print_results(
+def print_error(
     nbs: list[Path],
     message: str,
 ) -> None:
-    """Print results."""
+    """Print error message."""
     print(f"{len(nbs)} notebooks with {message}:")
     for nb in nbs:
         print("- ", nb)
+
+
+def print_results(
+    wrong_ec: list[Path],
+    nb_errors: list[Path],
+    nb_warnings: list[Path],
+    read_error: list[Path],
+) -> None:
+    """Print results."""
+    if wrong_ec:
+        print_error(wrong_ec, "wrong execution_count")
+    if nb_errors:
+        print_error(nb_errors, "errors in outputs")
+    if nb_warnings:
+        print_error(nb_warnings, "warnings in outputs")
+    if read_error:
+        print_error(read_error, "read error")
 
 
 def app_check() -> None:
@@ -123,32 +103,31 @@ def app_check() -> None:
         sys.exit(1)
 
     nb_files = get_nb_names_from_list(cfg.path)
+    read_error: list[Path] = []
     if cfg.verbose:
         print(f"Checking {len(nb_files)} notebooks.")
 
-    check_passed = True
-    if cfg.ec:
-        wrong_ec = check_ec(nb_files, not cfg.not_strict, cfg.no_exec)
+    wrong_ec: list[Path] = []
+    nb_errors: list[Path] = []
+    nb_warnings: list[Path] = []
+    for nb_name in nb_files:
+        nb = read_nb(nb_name)
+        if nb is None:
+            read_error.append(nb_name)
+            continue
 
-        if wrong_ec:
-            print_results(wrong_ec, "wrong execution_count")
-            check_passed = False
+        if cfg.ec and not check_nb_ec(nb, not cfg.not_strict, cfg.no_exec):
+            wrong_ec.append(nb_name)
 
-    if cfg.err:
-        nb_errors = check_errors(nb_files)
+        if cfg.err and not check_nb_errors(nb):
+            nb_errors.append(nb_name)
 
-        if nb_errors:
-            print_results(nb_errors, "errors in outputs")
-            check_passed = False
+        if cfg.warn and not check_nb_warnings(nb):
+            nb_warnings.append(nb_name)
 
-    if cfg.warn:
-        nb_warnings = check_warnings(nb_files)
+    print_results(wrong_ec, nb_errors, nb_warnings, read_error)
 
-        if nb_warnings:
-            print_results(nb_warnings, "warnings in outputs")
-            check_passed = False
-
-    if not check_passed:
+    if wrong_ec or nb_errors or nb_warnings or read_error:
         sys.exit(1)
 
 

@@ -200,12 +200,11 @@ def clean_nb_file(
     if not isinstance(path, list):
         path = [path]
     cleaned: list[Path] = []
-    errors: list[tuple[Path, Exception]] = []
+    errors: list[Path] = []
     for filename in path:
-        try:
-            nb = read_nb(filename)
-        except Exception as ex:
-            errors.append((filename, ex))
+        nb = read_nb(filename)
+        if nb is None:
+            errors.append(filename)
             continue
         result = clean_nb(
             nb,
