@@ -1,11 +1,14 @@
 from __future__ import annotations
 
 import argparse
+import sys
 from pathlib import Path
 from typing import Union
 
 from nbmetaclean.clean import CleanConfig, TupleStr, clean_nb_file
 from nbmetaclean.helpers import get_nb_names_from_list
+from nbmetaclean.version import __version__
+
 
 parser = argparse.ArgumentParser(
     prog="nbmetaclean",
@@ -80,6 +83,12 @@ parser.add_argument(
     action="store_true",
     help="Verbose mode. Print extra information.",
 )
+parser.add_argument(
+    "-v",
+    "--version",
+    action="store_true",
+    help="Print version information.",
+)
 
 
 def process_mask(mask: Union[list[str], None]) -> Union[tuple[TupleStr, ...], None]:
@@ -116,6 +125,11 @@ def print_result(
 def app_clean() -> None:
     """Clean metadata and execution_count from Jupyter notebook."""
     cfg = parser.parse_args()
+
+    if cfg.version:
+        print(f"nbmetaclean version: {__version__}")
+        sys.exit(0)
+
     clean_config = CleanConfig(
         clear_nb_metadata=not cfg.dont_clear_nb_metadata,
         clear_cell_metadata=cfg.clear_cell_metadata,
