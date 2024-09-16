@@ -4,6 +4,7 @@ from pathlib import Path
 import subprocess
 
 from nbmetaclean.helpers import read_nb, write_nb
+from nbmetaclean.version import __version__
 
 
 def run_app(
@@ -186,4 +187,15 @@ def test_check_nb_warnings(tmp_path):
     res_out, res_err = run_app(test_nb_path, ["--warn"])
     assert res_out.startswith("1 notebooks with warnings in outputs:\n")
     assert res_out.endswith("test_nb_3_ec.ipynb\n")
+    assert not res_err
+
+
+def test_check_app_version():
+    """test check `--version` option."""
+    res_out, res_err = run_app("--version")
+    assert res_out == f"nbcheck from nbmetaclean, version: {__version__}\n"
+    assert not res_err
+
+    res_out, res_err = run_app("-v")
+    assert res_out == f"nbcheck from nbmetaclean, version: {__version__}\n"
     assert not res_err
