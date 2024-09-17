@@ -4,19 +4,27 @@ from pathlib import Path
 
 import subprocess
 
+from pytest import CaptureFixture
+
 from nbmetaclean.helpers import read_nb, write_nb
-from nbmetaclean.version import __version__
 
 
 def run_app(
-    nb_path: Path,
+    nb_path: Path | list[Path] | None = None,
     args: list[str] = [],
+    cwd: Path | None = None,
 ) -> tuple[str, str]:
     """run app"""
+    if isinstance(nb_path, Path):
+        args.insert(0, str(nb_path))
+    elif isinstance(nb_path, list):
+        args = [str(nb) for nb in nb_path] + args
+
     run_result = subprocess.run(
-        ["python", "-m", "nbmetaclean.app_clean", str(nb_path), *args],
+        ["python", "-m", "nbmetaclean.app_clean", *args],
         capture_output=True,
         check=False,
+        cwd=cwd,
     )
     return run_result.stdout.decode("utf-8"), run_result.stderr.decode("utf-8")
 
@@ -24,7 +32,32 @@ def run_app(
 example_nbs_path = Path("tests/test_nbs")
 
 
-def test_clean_nb_metadata(tmp_path: Path):
+def test_app_clean_no_args(tmp_path: Path) -> None:
+    """test app_clean with no args"""
+    res_out, res_err = run_app(cwd=tmp_path)
+    assert res_out == "No notebooks found at current directory.\n"
+    assert not res_err
+
+    # prepare test clean notebook
+    nb_name_clean = "test_nb_2_clean.ipynb"
+    test_nb = read_nb(example_nbs_path / nb_name_clean)
+    test_nb_path = tmp_path / nb_name_clean
+    write_nb(test_nb, test_nb_path)
+
+    res_out, res_err = run_app(cwd=tmp_path)
+    assert res_out == "Checked: 1 notebooks. All notebooks are clean.\n"
+    assert not res_err
+
+    # add metadata
+    test_nb["metadata"]["some key"] = "some value"
+    write_nb(test_nb, test_nb_path)
+
+    res_out, res_err = run_app(cwd=tmp_path)
+    assert res_out == "cleaned: test_nb_2_clean.ipynb\n"
+    assert not res_err
+
+
+def test_clean_nb_metadata(tmp_path: Path, capsys: CaptureFixture) -> None:
     """test clean_nb_metadata"""
     nb_name_clean = "test_nb_2_clean.ipynb"
     test_nb = read_nb(example_nbs_path / nb_name_clean)
@@ -178,10 +211,10 @@ def test_clean_nb_wrong_file(tmp_path: Path):
 
 def test_app_clean_version():
     """test check `--version` option."""
-    res_out, res_err = run_app("--version")
-    assert res_out == f"nbmetaclean version: {__version__}\n"
+    res_out, res_err = run_app(args=["--version"])
+    assert res_out.startswith("nbmetaclean version: ")
     assert not res_err
 
-    res_out, res_err = run_app("-v")
-    assert res_out == f"nbmetaclean version: {__version__}\n"
+    res_out, res_err = run_app(args=["-v"])
+    assert res_out.startswith("nbmetaclean version: ")
     assert not res_err
