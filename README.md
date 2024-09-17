@@ -10,7 +10,8 @@ Can be used as a pre-commit hook or as a command line tool.
 
 [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/benchmark-utils)](https://pypi.org/project/nbmetaclean/)
 [![PyPI Status](https://badge.fury.io/py/nbmetaclean.svg)](https://badge.fury.io/py/nbmetaclean)
-[![Tests](https://github.com/ayasyrev/nbmetaclean/workflows/Tests/badge.svg)](https://github.com/ayasyrev/nbmetaclean/actions?workflow=Tests)  [![Codecov](https://codecov.io/gh/ayasyrev/nbmetaclean/branch/main/graph/badge.svg)](https://codecov.io/gh/ayasyrev/nbmetaclean)
+[![Tests](https://github.com/ayasyrev/nbmetaclean/workflows/Tests/badge.svg)](https://github.com/ayasyrev/nbmetaclean/actions?workflow=Tests)  
+[![Codecov](https://codecov.io/gh/ayasyrev/nbmetaclean/branch/main/graph/badge.svg)](https://codecov.io/gh/ayasyrev/nbmetaclean)
 
 ## nbmetaclean
 
