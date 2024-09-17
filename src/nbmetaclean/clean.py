@@ -186,7 +186,7 @@ def clean_nb(
 def clean_nb_file(
     path: Union[Path, list[Path]],
     cfg: Optional[CleanConfig] = None,
-) -> tuple[list[Path], list[tuple[Path, Exception]]]:
+) -> tuple[list[Path], list[Path]]:
     """Clean metadata and execution count from notebook.
 
     Args:

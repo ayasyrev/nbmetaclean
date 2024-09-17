@@ -99,7 +99,7 @@ def process_mask(mask: Union[list[str], None]) -> Union[tuple[TupleStr, ...], No
 
 def print_result(
     cleaned: list[Path],
-    errors: list[tuple[Path, Exception]],
+    errors: list[Path],
     clean_config: CleanConfig,
     path: list[Path],
     num_nbs: int,
@@ -150,6 +150,13 @@ def app_clean() -> None:
         nb_files,
         clean_config,
     )
+    # print(cfg)
+    if cfg.path == ".":  # if running without arguments add some info.
+        if not nb_files:
+            print("No notebooks found at current directory.")
+            sys.exit(0)
+        elif not cfg.silent and not cleaned and not errors:
+            print(f"Checked: {len(nb_files)} notebooks. All notebooks are clean.")
 
     if not cfg.silent:
         print_result(cleaned, errors, clean_config, path_list, len(nb_files))
