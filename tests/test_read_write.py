@@ -48,3 +48,17 @@ def test_write_nb(tmp_path: Path):
     result = write_nb(nb, tmp_path / "test_nb_1", timestamp=timestamp)
     res_stat = result.stat()
     assert timestamp == (res_stat.st_atime, res_stat.st_mtime)
+
+
+def test_read_nb_errors(tmp_path: Path):
+    """test read notebook not exist or invalid"""
+    # not valid
+    with open(tmp_path / "test.ipynb", "w", encoding="utf-8") as fh:
+        fh.write("invalid")
+    assert read_nb(tmp_path / "test.ipynb") is None
+
+    # not exist
+    assert read_nb(tmp_path / "test_nb_1.ipynb") is None
+
+    # not file
+    assert read_nb(tmp_path) is None

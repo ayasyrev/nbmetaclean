@@ -99,9 +99,9 @@ def process_mask(mask: Union[list[str], None]) -> Union[tuple[TupleStr, ...], No
 
 def print_result(
     cleaned: list[Path],
-    errors: list[tuple[Path, Exception]],
+    errors: list[Path],
     clean_config: CleanConfig,
-    path: list[Path],
+    path: list[str],
     num_nbs: int,
 ) -> None:
     if clean_config.verbose:
@@ -118,8 +118,8 @@ def print_result(
                 print("- ", nb)
     if errors:
         print(f"with errors: {len(errors)}")
-        for nb, exc in errors:
-            print(f"{nb}: {exc}")
+        for nb in errors:
+            print("- ", nb)
 
 
 def app_clean() -> None:
@@ -143,13 +143,20 @@ def app_clean() -> None:
         dry_run=cfg.dry_run,
         verbose=cfg.verbose if not cfg.silent else False,
     )
-    path_list = cfg.path if isinstance(cfg.path, list) else [cfg.path]
+    path_list: list[str] = cfg.path if isinstance(cfg.path, list) else [cfg.path]
     nb_files = get_nb_names_from_list(path_list, hidden=cfg.clean_hidden_nbs)
 
     cleaned, errors = clean_nb_file(
         nb_files,
         clean_config,
     )
+    # print(cfg)
+    if cfg.path == ".":  # if running without arguments add some info.
+        if not nb_files:
+            print("No notebooks found at current directory.")
+            sys.exit(0)
+        elif not cfg.silent and not cleaned and not errors:
+            print(f"Checked: {len(nb_files)} notebooks. All notebooks are clean.")
 
     if not cfg.silent:
         print_result(cleaned, errors, clean_config, path_list, len(nb_files))

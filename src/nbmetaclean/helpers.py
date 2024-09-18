@@ -16,16 +16,23 @@ __all__ = [
 ]
 
 
-def read_nb(path: PathOrStr) -> Nb:
+def read_nb(path: PathOrStr) -> Nb | None:
     """Read notebook from filename.
-
+    If file does not exist or is not a valid notebook, return None.
     Args:
         path (Union[str, PosixPath): Notebook filename.
 
     Returns:
-        Notebook: Jupyter Notebook as dict.
+        Notebook Union[None, Notebook]: Jupyter Notebook as dict or None if not valid or does not exist.
     """
-    return json.load(open(path, "r", encoding="utf-8"))
+    nb_path = Path(path)
+    if not nb_path.exists() or not nb_path.is_file():
+        return None
+    try:
+        nb = json.load(open(nb_path, "r", encoding="utf-8"))
+        return nb
+    except Exception:
+        return None
 
 
 def write_nb(

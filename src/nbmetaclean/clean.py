@@ -162,12 +162,13 @@ def clean_nb(
     changed = False
     if cfg.clear_nb_metadata and (metadata := nb.get("metadata")):
         old_metadata = copy.deepcopy(metadata)
-        masks = NB_METADATA_PRESERVE_MASKS
         if cfg.nb_metadata_preserve_mask:
             if not cfg.mask_merge:
                 masks = cfg.nb_metadata_preserve_mask
             else:
-                masks = cfg.nb_metadata_preserve_mask + masks
+                masks = cfg.nb_metadata_preserve_mask + NB_METADATA_PRESERVE_MASKS
+        else:
+            masks = NB_METADATA_PRESERVE_MASKS
         nb["metadata"] = filter_metadata(metadata, masks=masks)
         if nb["metadata"] != old_metadata:
             changed = True
@@ -186,7 +187,7 @@ def clean_nb(
 def clean_nb_file(
     path: Union[Path, list[Path]],
     cfg: Optional[CleanConfig] = None,
-) -> tuple[list[Path], list[tuple[Path, Exception]]]:
+) -> tuple[list[Path], list[Path]]:
     """Clean metadata and execution count from notebook.
 
     Args:
@@ -200,12 +201,11 @@ def clean_nb_file(
     if not isinstance(path, list):
         path = [path]
     cleaned: list[Path] = []
-    errors: list[tuple[Path, Exception]] = []
+    errors: list[Path] = []
     for filename in path:
-        try:
-            nb = read_nb(filename)
-        except Exception as ex:
-            errors.append((filename, ex))
+        nb = read_nb(filename)
+        if nb is None:
+            errors.append(filename)
             continue
         result = clean_nb(
             nb,
