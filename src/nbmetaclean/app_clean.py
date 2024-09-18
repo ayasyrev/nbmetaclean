@@ -101,7 +101,7 @@ def print_result(
     cleaned: list[Path],
     errors: list[Path],
     clean_config: CleanConfig,
-    path: list[Path],
+    path: list[str],
     num_nbs: int,
 ) -> None:
     if clean_config.verbose:
@@ -143,7 +143,7 @@ def app_clean() -> None:
         dry_run=cfg.dry_run,
         verbose=cfg.verbose if not cfg.silent else False,
     )
-    path_list = cfg.path if isinstance(cfg.path, list) else [cfg.path]
+    path_list: list[str] = cfg.path if isinstance(cfg.path, list) else [cfg.path]
     nb_files = get_nb_names_from_list(path_list, hidden=cfg.clean_hidden_nbs)
 
     cleaned, errors = clean_nb_file(

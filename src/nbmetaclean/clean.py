@@ -162,12 +162,13 @@ def clean_nb(
     changed = False
     if cfg.clear_nb_metadata and (metadata := nb.get("metadata")):
         old_metadata = copy.deepcopy(metadata)
-        masks = NB_METADATA_PRESERVE_MASKS
         if cfg.nb_metadata_preserve_mask:
             if not cfg.mask_merge:
                 masks = cfg.nb_metadata_preserve_mask
             else:
-                masks = cfg.nb_metadata_preserve_mask + masks
+                masks = cfg.nb_metadata_preserve_mask + NB_METADATA_PRESERVE_MASKS
+        else:
+            masks = NB_METADATA_PRESERVE_MASKS
         nb["metadata"] = filter_metadata(metadata, masks=masks)
         if nb["metadata"] != old_metadata:
             changed = True
