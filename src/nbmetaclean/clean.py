@@ -5,9 +5,9 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Optional, Tuple, Union
 
-from nbmetaclean.helpers import read_nb, write_nb
+from .helpers import read_nb, write_nb
 
-from .types import Cell, CodeCell, Metadata, Nb, Output
+from .nb_types import Cell, CodeCell, Metadata, Nb, Output
 
 
 __all__ = [
