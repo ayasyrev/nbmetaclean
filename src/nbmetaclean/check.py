@@ -1,5 +1,5 @@
 from typing import cast
-from nbmetaclean.types import CodeCell, Nb
+from .nb_types import CodeCell, Nb
 
 
 __all__ = ["check_nb_ec", "check_nb_errors"]
