@@ -5,7 +5,7 @@ import os
 from pathlib import Path
 from typing import Optional
 
-from .types import Nb, PathOrStr
+from .nb_types import Nb, PathOrStr
 
 __all__ = [
     "get_nb_names",
