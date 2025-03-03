@@ -9,10 +9,11 @@ from nbmetaclean.helpers import read_nb, write_nb
 
 def run_app(
     nb_path: Path | list[Path] | None = None,
-    args: list[str] = [],
+    args: list[str] | None = None,
     cwd: Path | None = None,
 ) -> tuple[str, str]:
     """run app"""
+    args = args or []
     if isinstance(nb_path, Path):
         args.insert(0, str(nb_path))
     elif isinstance(nb_path, list):
