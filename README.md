@@ -1,3 +1,5 @@
+
+
 # nbmetaclean
 Collections of python scripts for checking and cleaning Jupyter Notebooks metadata, execution_count and optionally output.
 Can be used as command line tool or pre-commit hook.
@@ -214,6 +216,7 @@ pre-commit config example:
 repos:
     - repo: https://github.com/ayasyrev/nbmetaclean
         rev: 0.1.1
+        hooks:
         - id: nbcheck
           args: [ --ec, --no_exec ]
 ```
